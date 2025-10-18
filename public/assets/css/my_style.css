@@ -1,0 +1,688 @@
+/* ===== Base ===== */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
+    Arial, sans-serif;
+  color: #1e293b;
+  background: #fff; /* mobile look */
+  overflow-x: hidden;
+}
+
+/* ===== Phone frame: tetap mobile di semua device ===== */
+.app-shell {
+  width: 100%;
+  max-width: 430px; /* kunci tampilan mobile */
+  margin: 0 auto;
+  min-height: 100svh;
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: none; /* tanpa frame di mobile */
+}
+
+/* ===== Header (dua gaya: sederhana & modern) ===== */
+header .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1040;
+  background: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding-block: 0.5rem;
+}
+.bg-native {
+  background: #fff;
+} /* untuk header sederhana */
+.modern-header {
+  background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+.logo-size-navbar {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  display: block;
+}
+.form-switch .form-check-input {
+  width: 40px;
+  height: 20px;
+  cursor: pointer;
+}
+
+/* ===== Konten & spacing vs bottom-nav ===== */
+:root {
+  --bottom-nav-h: 64px;
+}
+main {
+  padding: 16px;
+  padding-bottom: calc(var(--bottom-nav-h) + 16px);
+}
+
+/* ===== Breadcrumb (halaman modern) ===== */
+.breadcrumb {
+  background: transparent;
+  margin-bottom: 0;
+}
+.breadcrumb a {
+  color: #0d6efd;
+  text-decoration: none;
+}
+.modern-breadcrumb {
+  background: transparent;
+  font-size: 0.875rem;
+}
+
+/* ===== Carousel (fade + mobile frame) ===== */
+#carouselExampleCaptions {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+#carouselExampleCaptions img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+}
+/* Caption fade-up */
+#carouselExampleCaptions .carousel-caption {
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 10px;
+  padding: 10px 12px;
+  bottom: 15px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+#carouselExampleCaptions .carousel-item.active .carousel-caption {
+  opacity: 1;
+  transform: translateY(0);
+}
+#carouselExampleCaptions .carousel-caption h5 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+#carouselExampleCaptions .carousel-caption p {
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+/* Indicators & controls kecil */
+#carouselExampleCaptions .carousel-indicators [data-bs-target] {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+}
+#carouselExampleCaptions .carousel-indicators .active {
+  background: #f1c40f;
+}
+#carouselExampleCaptions .carousel-control-prev-icon,
+#carouselExampleCaptions .carousel-control-next-icon {
+  width: 30px;
+  height: 30px;
+}
+/* Fade antar slide (sinkron dengan .carousel-fade di HTML) */
+#carouselExampleCaptions.carousel-fade .carousel-item {
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+#carouselExampleCaptions.carousel-fade .carousel-item.active {
+  opacity: 1;
+}
+
+/* ===== Card modern (pilih tempat) ===== */
+.cards-mobile-wrap {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  padding: 8px 0;
+}
+.modern-card {
+  position: relative;
+  background: #fff;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.modern-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.08);
+}
+.no-tempat {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  color: #fff;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+.status-tempat {
+  position: absolute;
+  bottom: 10px;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+}
+.modern-card.is-empty .status-tempat {
+  background: #dcfce7;
+  color: #166534;
+}
+.modern-card.is-booked .status-tempat {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+/* Grid tetap 1 kolom (mobile look) di perangkat besar */
+@media (min-width: 768px) {
+  .cards-mobile > [class^="col-"],
+  .cards-mobile > [class*=" col-"] {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+/* ===== Bottom Nav (tab bar) ===== */
+.app-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px;
+  height: var(--bottom-nav-h);
+  background: #fff;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.06);
+  padding-bottom: env(safe-area-inset-bottom);
+  display: flex;
+  align-items: center;
+}
+.app-bottom-nav .nav {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  padding: 0 0.25rem;
+}
+.app-bottom-nav .nav-item {
+  display: flex;
+}
+.app-bottom-nav .nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  color: #64748b;
+  border-radius: 0.75rem;
+  padding: 0.35rem 0.25rem;
+  position: relative;
+  transition: background 0.2s, color 0.2s;
+}
+.app-bottom-nav .nav-link .bi {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+.app-bottom-nav .nav-link .label {
+  font-size: 0.8rem;
+  line-height: 1;
+}
+.app-bottom-nav .nav-link:hover,
+.app-bottom-nav .nav-link:focus,
+.app-bottom-nav .nav-link.active {
+  color: #0d6efd;
+  background: rgba(13, 110, 253, 0.06);
+}
+.active-dot {
+  position: absolute;
+  top: 0.25rem;
+  width: 22px;
+  height: 3px;
+  border-radius: 999px;
+  background: transparent;
+  transition: background 0.2s;
+}
+.nav-link.active .active-dot {
+  background: #0d6efd;
+}
+
+/* ===== Aksesibilitas ===== */
+a,
+button {
+  outline: none;
+}
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #0d6efd40;
+  outline-offset: 2px;
+}
+
+/* ===== Saat dibuka di Tablet/PC: tampilkan “frame HP” ===== */
+@media (min-width: 768px) {
+  body {
+    background: #eef1f6;
+    padding: 20px 0;
+  }
+  .app-shell {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  }
+  #carouselExampleCaptions img {
+    height: 300px;
+  }
+}
+/* Header tuning (opsional, lebih rapi) */
+header .navbar .container {
+  padding-inline: 0.75rem; /* tepi kiri/kanan rapi */
+  min-height: 56px; /* tinggi minimum nyaman disentuh */
+}
+
+header .navbar-brand {
+  padding-block: 0.25rem;
+}
+
+header .form-check.form-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem; /* jarak icon & switch */
+  margin: 0;
+}
+
+header .form-check-label {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  color: #334155;
+}
+
+header .form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+@media (min-width: 768px) {
+  /* tetap mobile-look di desktop, tapi beri napas */
+  header .navbar .container {
+    padding-inline: 1rem;
+  }
+}
+/* ===== Bottom Nav – FIX & STABILISASI ===== */
+
+/* Reset bawaan <ul> agar tidak ada jarak aneh */
+.app-bottom-nav .nav {
+  margin: 0 !important;
+  padding: 0 0.25rem !important;
+  list-style: none;
+  height: 100%;
+  display: flex;
+  align-items: stretch; /* semua item sama tinggi */
+  justify-content: space-around;
+  gap: 0; /* jika ingin beri jarak antar tab, ganti mis. 6px */
+}
+
+/* Pastikan setiap <li> benar-benar membagi lebar rata */
+.app-bottom-nav .nav-item {
+  flex: 1 1 0;
+  display: flex;
+}
+
+/* Link tab rapi & konsisten */
+.app-bottom-nav .nav-link {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.22rem;
+  border-radius: 0.75rem;
+  padding: 0.35rem 0.25rem;
+  color: #64748b;
+  text-align: center;
+  line-height: 1;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.1s ease;
+}
+
+/* Ikon & label proporsional */
+.app-bottom-nav .nav-link .bi {
+  font-size: 1.35rem;
+}
+.app-bottom-nav .nav-link .label {
+  font-size: 0.78rem;
+}
+
+/* State interaksi */
+.app-bottom-nav .nav-link:hover,
+.app-bottom-nav .nav-link:focus,
+.app-bottom-nav .nav-link.active,
+.app-bottom-nav .nav-link[aria-current="page"] {
+  color: #0d6efd;
+  background: rgba(13, 110, 253, 0.06);
+}
+
+/* Indicator bar kecil di atas tiap tab aktif */
+.app-bottom-nav .active-dot {
+  position: absolute;
+  top: 0.24rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 22px;
+  height: 3px;
+  border-radius: 999px;
+  background: transparent;
+  transition: background 0.2s ease;
+}
+.app-bottom-nav .nav-link.active .active-dot,
+.app-bottom-nav .nav-link[aria-current="page"] .active-dot {
+  background: #0d6efd;
+}
+
+/* Wrapper footer fix: selalu nempel bawah, tidak “lompat” */
+.app-bottom-nav {
+  position: fixed;
+  z-index: 1030; /* di atas konten, di bawah modal */
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 430px; /* match .app-shell */
+  height: var(--bottom-nav-h, 64px);
+  background: #fff;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.06);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Pastikan konten tidak ketiban footer */
+main {
+  padding-bottom: calc(var(--bottom-nav-h, 64px) + 16px) !important;
+}
+
+/* iOS safe area (opsional) */
+@supports (padding: max(0px)) {
+  .app-bottom-nav {
+    padding-bottom: max(env(safe-area-inset-bottom), 0px);
+  }
+}
+/* --- FIX: ukuran logo konsisten di navbar --- */
+header .navbar .navbar-brand .logo-size-navbar {
+  height: 44px; /* tinggi logo utama */
+  width: auto; /* biar proporsional */
+  max-height: 44px; /* jaga-jaga kalau ada style lain */
+  object-fit: contain;
+  display: block;
+}
+
+/* Sesuaikan sedikit di layar lebih besar */
+@media (min-width: 768px) {
+  header .navbar .navbar-brand .logo-size-navbar {
+    height: 52px;
+    max-height: 52px;
+  }
+}
+/* --- Card dengan foto --- */
+.card-with-photo {
+  overflow: hidden;
+}
+.card-with-photo .card-photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+  transition: transform 0.35s ease;
+}
+.card-with-photo .card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.15) 55%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  pointer-events: none;
+}
+
+/* Glass panel bawah */
+.card-with-photo .card-info {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+.card-with-photo .btn-reserve {
+  border: 0;
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-weight: 700;
+  color: #0b3a8f;
+  background: linear-gradient(135deg, #fff, #dbeafe);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+}
+.card-with-photo .btn-reserve:active {
+  transform: translateY(1px);
+}
+
+/* Hover effect */
+.card-with-photo:hover .card-photo {
+  transform: scale(1.06);
+}
+
+/* Badge & status tetap terbaca di atas foto */
+.card-with-photo .no-tempat {
+  color: #0ea5e9;
+  background: rgba(255, 255, 255, 0.9);
+}
+.card-with-photo.is-empty .status-tempat {
+  background: rgba(22, 101, 52, 0.18);
+  color: #dcfce7;
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+/* Mobile tuning */
+@media (max-width: 575.98px) {
+  .card-with-photo .card-info {
+    padding: 8px 10px;
+  }
+  .card-with-photo .btn-reserve {
+    padding: 5px 9px;
+    font-size: 0.85rem;
+  }
+}
+/* === Product Card (mobile-first) === */
+.product-card {
+  position: relative;
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 12px;
+  border-radius: 14px;
+  background: #fff;
+  padding: 10px;
+}
+
+.product-thumb {
+  width: 84px;
+  height: 84px;
+  border-radius: 12px;
+  object-fit: cover;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.product-title {
+  font-weight: 700;
+  color: #0f172a;
+}
+.product-price {
+  color: #0d6efd;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.product-desc {
+  font-size: 0.85rem;
+  color: #475569;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* qty group */
+.qty-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1f5f9;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 4px;
+  border-radius: 999px;
+}
+.btn-qty {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 0;
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.04);
+}
+.btn-qty:active {
+  transform: translateY(1px);
+}
+.qty-input {
+  width: 40px;
+  text-align: center;
+  border: 0;
+  background: transparent;
+  font-weight: 700;
+}
+
+/* CTAs */
+.btn-add-to-cart {
+  border-radius: 10px;
+  border: 0;
+  background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+  color: #fff;
+  font-weight: 700;
+  padding: 8px 12px;
+  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.25);
+}
+.btn-add-to-cart:active {
+  transform: translateY(1px);
+}
+
+/* Ringkasan pesanan (melayang atas bottom-nav) */
+.order-summary {
+  position: sticky;
+  bottom: calc(var(--bottom-nav-h, 64px) + 8px);
+  z-index: 1020;
+  border-radius: 12px;
+  margin-top: 12px;
+}
+
+/* Desktop/Tablet → tetap mobile look, sedikit lega */
+@media (min-width: 768px) {
+  .product-card {
+    grid-template-columns: 96px 1fr;
+    gap: 14px;
+    padding: 12px;
+  }
+  .product-thumb {
+    width: 96px;
+    height: 96px;
+  }
+}
+/* Tombol Keranjang mengambang (FAB) */
+.btn-cart-fab {
+  position: fixed;
+  z-index: 1035;
+  right: max(
+    12px,
+    calc((100vw - 430px) / 2 + 12px)
+  ); /* tetap di dalam frame HP */
+  bottom: calc(var(--bottom-nav-h, 64px) + 12px); /* di atas bottom-nav */
+  width: 56px;
+  height: 56px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  border: 0;
+  background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 10px 24px rgba(59, 130, 246, 0.35);
+  transition: transform 0.1s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+.btn-cart-fab:active {
+  transform: translateY(1px);
+}
+.btn-cart-fab .bi {
+  font-size: 1.35rem;
+  line-height: 1;
+}
+
+/* Badge jumlah item di keranjang */
+.btn-cart-fab .cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -4px;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+/* Sembunyikan badge jika 0 (opsional): tambahkan data-empty="1" via server/JS */
+.btn-cart-fab[data-empty="1"] .cart-badge {
+  display: none;
+}
+
+/* Desktop/Tablet: tetap berada di dalam frame HP di tengah layar */
+@media (min-width: 768px) {
+  .btn-cart-fab {
+    right: calc((100vw - 430px) / 2 + 12px);
+    bottom: calc(var(--bottom-nav-h, 64px) + 14px);
+  }
+}
