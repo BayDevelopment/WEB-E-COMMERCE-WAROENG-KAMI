@@ -35,26 +35,43 @@ class HomepageController extends BaseController
         $db = db_connect();
 
         if ($q !== '') {
-            // 🔎 MODE PENCARIAN: by nama_produk dari tb_pesanan_item
-            // Ambil produk "tersedia" yang PERNAH dipesan dengan nama mirip q,
-            // urutkan dari pesanan TERBARU (ps.created_at), batasi 3 hasil.
-            $products = $db->table('tb_produk pr')
-                ->select('pr.id_produk AS id, pr.nama_produk AS nama, pr.deskripsi, pr.harga, pr.gambar, pr.slug, pr.status')
-                ->join('tb_pesanan_item pi', 'pi.produk_id = pr.id_produk', 'inner')
+            // Subquery: ambil produk yang PERNAH dipesan dan cocok di nama item,
+            // hitung waktu pesanan TERAKHIR per produk.
+            $sub = $db->table('tb_pesanan_item pi')
+                ->select('pi.produk_id, MAX(ps.created_at) AS last_order_at')
                 ->join('tb_pesanan ps', 'ps.id_pesanan = pi.pesanan_id', 'inner')
+                ->like('pi.nama_produk', $q)
+                ->groupBy('pi.produk_id');
+
+            $subSql = $sub->getCompiledSelect(); // untuk join sebagai derived table
+
+            // Join ke tb_produk yang "tersedia", urutkan dari pesanan terbaru, limit 3
+            $products = $db->table("($subSql) sx")
+                ->select('pr.id_produk AS id, pr.nama_produk AS nama, pr.deskripsi, pr.harga, pr.gambar, pr.slug, pr.status, sx.last_order_at')
+                ->join('tb_produk pr', 'pr.id_produk = sx.produk_id', 'inner')
                 ->where('pr.status', 'tersedia')
-                ->like('pi.nama_produk', $q) // cari by nama_produk di pesanan
-                ->groupBy('pr.id_produk')    // distinct produk
-                ->orderBy('MAX(ps.created_at)', 'DESC', false) // pesanan terbaru dulu
+                ->orderBy('sx.last_order_at', 'DESC')
                 ->limit(3)
                 ->get()->getResultArray();
+
+            // Optional fallback: kalau kosong, coba cari langsung di tb_produk (biar UX nggak hening)
+            if (empty($products)) {
+                $products = $db->table('tb_produk')
+                    ->select('id_produk AS id, nama_produk AS nama, deskripsi, harga, gambar, slug, status')
+                    ->where('status', 'tersedia')
+                    ->like('nama_produk', $q)
+                    ->orderBy('created_at', 'DESC')
+                    ->orderBy('id_produk', 'DESC')
+                    ->limit(3)
+                    ->get()->getResultArray();
+            }
         } else {
-            // 📋 MODE DEFAULT: tampilkan semua produk tersedia (tanpa limit)
+            // MODE DEFAULT: semua produk "tersedia", urut terbaru (tanpa limit)
             $builder = $db->table('tb_produk')
                 ->select('id_produk AS id, nama_produk AS nama, deskripsi, harga, gambar, slug, status')
                 ->where('status', 'tersedia');
 
-            // Kalau TIDAK ada kolom created_at di tb_produk, hapus baris di bawah
+            // Jika tb_produk PUNYA created_at → pertahankan 2 baris di bawah; kalau tidak, hapus yang created_at.
             $builder->orderBy('created_at', 'DESC');
             $builder->orderBy('id_produk', 'DESC');
 
@@ -68,6 +85,7 @@ class HomepageController extends BaseController
             'products' => $products,
         ]);
     }
+
 
 
 
@@ -257,36 +275,62 @@ class HomepageController extends BaseController
 
     public function Data_Keranjang()
     {
+        // Pastikan sesi aktif, lalu ambil owner_key yang konsisten
+        \Config\Services::session();
+        $ownerKey = \App\Libraries\CartOwner::key();
+
         $db = db_connect();
 
-        // Ambil isi keranjang + info produk (nama & gambar)
+        // Ambil isi keranjang milik owner_key ini + info produk
         $items = $db->table('tb_keranjang k')
-            ->select('k.id_keranjang, k.produk_id, k.jumlah, k.harga, k.subtotal,
-                  p.nama_produk, p.gambar, p.slug')
+            ->select("
+            k.id_keranjang,
+            k.produk_id,
+            k.jumlah,
+            k.harga,
+            k.subtotal,
+            p.nama_produk,
+            p.gambar,
+            p.slug,
+            -- line_total fallback jika subtotal kosong/0
+            CASE
+                WHEN (k.subtotal IS NULL OR k.subtotal = 0)
+                    THEN (k.harga * k.jumlah)
+                ELSE k.subtotal
+            END AS line_total
+        ", false)
             ->join('tb_produk p', 'p.id_produk = k.produk_id', 'left')
+            ->where('k.owner_key', $ownerKey)            // 🔒 filter ketat per owner_key
             ->orderBy('k.id_keranjang', 'ASC')
-            ->get()->getResultArray();
+            ->get()
+            ->getResultArray();
 
         // Hitung total kuantitas & total harga
         $totalQty = 0;
         $total    = 0.0;
-        foreach ($items as $it) {
-            $totalQty += (int)($it['jumlah'] ?? 0);
-            $subtotal = isset($it['subtotal'])
-                ? (float)$it['subtotal']
-                : ((float)($it['harga'] ?? 0) * (int)($it['jumlah'] ?? 0));
-            $total += $subtotal;
+        if (!empty($items)) {
+            $totalQty = array_sum(array_map(static fn($r) => (int)($r['jumlah'] ?? 0), $items));
+            $total    = array_sum(array_map(static fn($r) => (float)($r['line_total'] ?? 0), $items));
         }
 
-        // 🔑 Preview kode pesanan
+        // 🔑 Preview kode pesanan (mis. KP0001, KP0002, ...)
+        // Pastikan method previewKodePesanan($db, $prefix, $pad) tersedia di controller ini.
         $kodePreview = $this->previewKodePesanan($db, 'KP', 4);
 
-        // === AMBIL MEJA YANG BELUM ADA DI TB_PESANAN ===
-        $mejaM = new MejaModel();
+        // === AMBIL MEJA YANG TIDAK SEDANG DIPAKAI PADA PESANAN AKTIF ===
+        // Sesuaikan daftar status aktif sesuai skema Anda (contoh di bawah).
+        $statusAktif = ['menunggu', 'diproses', 'dibayar'];
+        $mejaM = new \App\Models\MejaModel();
+
+        // Subquery untuk meja yang sedang dipakai pada pesanan aktif
+        $sub = $db->table('tb_pesanan')
+            ->select('meja_id', false)
+            ->whereIn('status', $statusAktif)
+            ->where('meja_id IS NOT NULL', null, false);
 
         $mejaTersedia = $mejaM->select('id_meja, kode_meja, nama_meja, kapasitas')
             ->where('is_active', 1)
-            ->where('id_meja NOT IN (SELECT meja_id FROM tb_pesanan WHERE meja_id IS NOT NULL)', null, false)
+            ->where("id_meja NOT IN ({$sub->getCompiledSelect()})", null, false)
             ->orderBy('kode_meja', 'ASC')
             ->findAll();
         // === END ===
@@ -298,11 +342,12 @@ class HomepageController extends BaseController
             'total'                  => $total,
             'total_qty'              => $totalQty,
             'kode_pesanan_view_only' => $kodePreview,
-            'meja_tersedia'          => $mejaTersedia, // dikirim ke view
+            'meja_tersedia'          => $mejaTersedia,
         ];
 
         return view('pelanggan/page-keranjang', $data);
     }
+
 
 
 

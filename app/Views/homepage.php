@@ -476,12 +476,19 @@
     <div class="container-narrow">
         <form class="wk-search" method="get" action="<?= base_url('/') ?>">
             <i class="bi bi-search"></i>
-            <input type="text" name="q" placeholder="Cari menu favoritmu…"
+            <input
+                type="text"
+                name="q"
+                inputmode="search"
+                minlength="1"
+                maxlength="80"
+                placeholder="Cari menu favoritmu…"
                 value="<?= esc($q ?? '') ?>">
             <button class="btn btn-wk" type="submit">Cari</button>
         </form>
     </div>
 </section>
+
 
 
 <!-- PRODUK (LIST VERTIKAL) -->
@@ -505,7 +512,7 @@
 
                         <div class="wk-cta">
                             <div class="wk-price">Rp <?= number_format((float)($p['harga'] ?? 0), 0, ',', '.') ?></div>
-                            <form method="post" action="<?= base_url('pelanggan/tambah-keranjang') ?>">
+                            <form method="post" action="<?= base_url('pelanggan/keranjang') ?>">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="produk_id" value="<?= (int)$p['id'] ?>">
                                 <input type="hidden" name="jumlah" value="1">
