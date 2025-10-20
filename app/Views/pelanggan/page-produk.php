@@ -1,5 +1,63 @@
 <?= $this->extend('templates/pelanggan/main') ?>
 <?= $this->section('public_content') ?>
+<style>
+    /* Shim dark mode untuk CSS lama yang hard-coded */
+    [data-bs-theme="dark"] body {
+        background-color: #0f1115 !important;
+        color: #e5e7eb !important;
+    }
+
+    /* Semua kontainer/kartu/list yang biasanya putih → ikut var Bootstrap */
+    [data-bs-theme="dark"] .bg-white,
+    [data-bs-theme="dark"] .wk-section,
+    [data-bs-theme="dark"] .container,
+    [data-bs-theme="dark"] .card,
+    [data-bs-theme="dark"] .wk-card,
+    [data-bs-theme="dark"] .product-card,
+    [data-bs-theme="dark"] .list-group-item,
+    [data-bs-theme="dark"] .offcanvas,
+    [data-bs-theme="dark"] .dropdown-menu {
+        background-color: var(--bs-body-bg) !important;
+        color: var(--bs-body-color) !important;
+        border-color: var(--bs-border-color) !important;
+    }
+
+    /* Input, input-group, badge, dsb. */
+    [data-bs-theme="dark"] .form-control,
+    [data-bs-theme="dark"] .form-select,
+    [data-bs-theme="dark"] .input-group-text {
+        background-color: var(--bs-body-bg) !important;
+        color: var(--bs-body-color) !important;
+        border-color: var(--bs-border-color) !important;
+    }
+
+    /* Teks & border utilitas */
+    [data-bs-theme="dark"] .text-dark {
+        color: var(--bs-body-color) !important;
+    }
+
+    [data-bs-theme="dark"] .text-muted {
+        color: var(--bs-secondary-color) !important;
+    }
+
+    [data-bs-theme="dark"] .border,
+    [data-bs-theme="dark"] .btn-outline-wk {
+        border-color: var(--bs-border-color) !important;
+    }
+
+    /* Button custom */
+    [data-bs-theme="dark"] .btn-wk {
+        background: #f59e0b !important;
+        color: #0b0f17 !important;
+        border: none !important;
+    }
+
+    /* Kartu produk spesifik (kalau ada kelas ini di page-produk) */
+    [data-bs-theme="dark"] .wk-grid .product-card .desc,
+    [data-bs-theme="dark"] .wk-desc {
+        color: var(--bs-secondary-color) !important;
+    }
+</style>
 
 <nav aria-label="breadcrumb" class="mb-3">
     <ol class="breadcrumb">
@@ -8,64 +66,91 @@
     </ol>
 </nav>
 
-<?php
-// contoh data (hapus jika sudah dari DB)
-$products = $products ?? [
-    ['id' => 1, 'nama' => 'Nasi Goreng Spesial', 'deskripsi' => 'Nasi gurih, ayam suwir, telur, sayur', 'harga' => 28000, 'gambar' => base_url('assets/img/nasi-goreng.jpeg'), 'qty' => 0],
-    ['id' => 2, 'nama' => 'Ayam Bakar Madu', 'deskripsi' => 'Bumbu madu, daging empuk, sambal', 'harga' => 35000, 'gambar' => base_url('assets/img/ayam-bakar-madu.jpg'), 'qty' => 0],
-    ['id' => 3, 'nama' => 'Es Teh Manis', 'deskripsi' => 'Teh premium, gula cair, es batu', 'harga' => 8000, 'gambar' => base_url('assets/img/esteh.jpeg'), 'qty' => 0],
-];
-?>
-
-<div class="cards-mobile-wrap mb-3">
+<div class="cards-mobile-wrap">
     <div class="row g-3 cards-mobile">
-        <?php foreach ($products as $p): ?>
-            <div class="col-12">
-                <div class="product-card shadow-sm border-0">
-                    <img class="product-thumb" src="<?= esc($p['gambar']) ?>" alt="<?= esc($p['nama']) ?>">
+        <?php if (!empty($d_produk)): ?>
+            <?php foreach ($d_produk as $p): ?>
+                <div class="col-12">
+                    <div class="product-card shadow-sm border-0">
+                        <div class="product-media">
+                            <img
+                                class="product-thumb"
+                                src="<?= !empty($p['gambar'])
+                                            ? base_url('assets/img/' . esc($p['gambar']))
+                                            : base_url('assets/img/box.png') ?>"
+                                alt="<?= esc($p['nama_produk']) ?>">
 
-                    <div class="product-body mb-2">
-                        <div class="d-flex align-items-start justify-content-between">
-                            <h6 class="product-title mb-1"><?= esc($p['nama']) ?></h6>
-                            <span class="product-price">Rp <?= number_format($p['harga'], 0, ',', '.') ?></span>
+                            <?php if ((int)($p['favorit'] ?? 0) === 1): ?>
+                                <span class="badge-favorit" aria-label="Menu Favorit">
+                                    <i class="bi bi-star-fill" aria-hidden="true"></i>
+                                    Favorit
+                                </span>
+                            <?php endif; ?>
                         </div>
-                        <p class="product-desc mb-2"><?= esc($p['deskripsi']) ?></p>
 
-                        <div class="d-flex align-items-center justify-content-between mb-2">
-                            <div class="qty-group" data-id="<?= (int)$p['id'] ?>">
-                                <button class="btn-qty minus" type="button" aria-label="Kurangi">
-                                    <i class="bi bi-dash-lg"></i>
-                                </button>
-                                <input class="qty-input" type="text" value="<?= (int)$p['qty'] ?>" inputmode="numeric" pattern="[0-9]*" aria-label="Jumlah">
-                                <button class="btn-qty plus" type="button" aria-label="Tambah">
-                                    <i class="bi bi-plus-lg"></i>
-                                </button>
+                        <div class="product-body mb-2 p-3">
+                            <div class="d-flex align-items-start justify-content-between">
+                                <h6 class="product-title mb-1 wk-yellow-on-dark"><?= esc($p['nama_produk']) ?></h6>
+                                <span class="product-price">Rp <?= number_format((float)$p['harga'], 0, ',', '.') ?></span>
                             </div>
 
-                            <form action="<?= base_url('pesanan/tambah') ?>" method="post" class="m-0">
-                                <input type="hidden" name="produk_id" value="<?= (int)$p['id'] ?>">
-                                <input type="hidden" name="jumlah" value="<?= (int)$p['qty'] ?>" class="jumlah-hidden">
-                                <button class="btn btn-add-to-cart" type="submit">
-                                    Tambah
-                                </button>
-                            </form>
+                            <?php if (!empty($p['deskripsi'])): ?>
+                                <p class="product-desc mb-2"><?= esc($p['deskripsi']) ?></p>
+                            <?php endif; ?>
+
+                            <!-- Stack aksi: tombol vertikal rapi & full width -->
+                            <div class="d-grid gap-2 mt-2">
+
+                                <!-- Tambah (submit ke keranjang, default jumlah=1) -->
+                                <form action="<?= base_url('pelanggan/produk') ?>" method="post" class="m-0">
+                                    <?= csrf_field() ?>
+                                    <input type="hidden" name="produk_id" value="<?= (int)$p['id_produk'] ?>">
+                                    <input type="hidden" name="jumlah" value="1">
+                                    <button class="btn btn-add-to-cart rounded-pill py-2 w-100 d-flex align-items-center justify-content-center gap-2"
+                                        type="submit" aria-label="Tambah ke keranjang">
+                                        <span>Tambah</span>
+                                        <i class="fa-solid fa-tags"></i>
+                                    </button>
+                                </form>
+
+                                <form action="<?= base_url('pelanggan/produk') ?>" method="post" class="m-0 form-add-to-cart">
+                                    <?= csrf_field() ?>
+                                    <input type="hidden" name="produk_id" value="<?= (int)$p['id_produk'] ?>">
+                                    <input type="hidden" name="jumlah" value="1">
+                                    <input type="hidden" name="stay" value="1"><!-- ← tetap di page produk -->
+                                    <button class="btn btn-add-to-cart rounded-pill py-2 w-100 d-flex align-items-center justify-content-center gap-2" type="submit" aria-label="Masukkan ke keranjang">
+                                        <i class="bi bi-cart-plus me-1" aria-hidden="true"></i> Keranjangi
+                                    </button>
+                                </form>
+
+
+                            </div>
+
                         </div>
                     </div>
                 </div>
+
+            <?php endforeach; ?>
+        <?php else: ?>
+            <div class="cover-image-empty">
+                <img src="<?= base_url('assets/img/box.png') ?>" alt="IMG-Waroeng-Kami" class="size-img-empty">
+                <h6 class="text-capitalize">Ups, Produk tidak ditemukan nih</h6>
+                <p class="text-capitalize">Silakan hubungi pemilik toko atau kasir</p>
             </div>
-        <?php endforeach; ?>
+        <?php endif; ?>
     </div>
+
     <?php $count = (int)($cart_count ?? 0); ?>
-    <a href="<?= base_url('keranjang'); ?>"
-        class="btn-cart-fab"
-        aria-label="Buka keranjang"
-        <?= $count === 0 ? 'data-empty="1"' : '' ?>>
+    <a href="<?= base_url('pelanggan/keranjang'); ?>" class="btn-cart-fab"
+        aria-label="Buka keranjang" <?= $count === 0 ? 'data-empty="1"' : '' ?>>
         <i class="bi bi-cart3"></i>
-        <span class="cart-badge"><?= $count ?></span>
+        <?php if ($count > 0): ?>
+            <span class="cart-badge"><?= $count ?></span>
+        <?php endif; ?>
     </a>
 
-
 </div>
+
 
 <?= $this->endSection() ?>
 <?= $this->section('scripts') ?>

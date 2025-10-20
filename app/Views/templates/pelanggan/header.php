@@ -10,4 +10,6 @@
     <!-- Eksternal CSS -->
     <link rel="stylesheet" href="<?= base_url('assets/css/my_style.css') ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" />
+    <!-- CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
 </head>

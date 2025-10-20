@@ -1,8 +1,417 @@
 /* ===== Base ===== */
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+/* ========== CORE ========== */
+:root {
+  --wk-accent-yellow: #f59e0b; /* satu kali saja */
+}
+
+/* Transisi halus */
+html,
+body {
+  transition: background-color 0.25s, color 0.25s, border-color 0.25s,
+    filter 0.25s;
+}
+
+/* Base html bg agar tidak “kedip putih” */
+html {
+  background-color: #ffffff;
+}
+body {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+}
+
+/* ========== LIGHT ========== */
+body[data-bs-theme="light"] {
+  /* Bootstrap palette */
+  --bs-body-bg: #ffffff;
+  --bs-body-color: #111827;
+  --bs-secondary-color: #6b7280;
+  --bs-border-color: #e5e7eb;
+  --bs-secondary-bg: #ffffff;
+  --bs-tertiary-bg: #f8fafc;
+
+  /* WK mapping */
+  --wk-sec-bg: var(--bs-body-bg);
+  --wk-card-bg: var(--bs-secondary-bg);
+  --wk-text: var(--bs-body-color);
+  --wk-muted: var(--bs-secondary-color);
+  --wk-border: var(--bs-border-color);
+  --wk-shadow: 0 10px 24px rgba(0, 0, 0, 0.06);
+}
+
+/* ========== DARK ========== */
+body.is-dark[data-bs-theme="dark"] {
+  color-scheme: dark; /* scrollbar & native widgets */
+  --bs-body-bg: #0b0f17;
+  --bs-body-color: #e5e7eb;
+  --bs-secondary-color: #9ca3af;
+  --bs-border-color: #2b3240;
+  --bs-secondary-bg: #121725;
+  --bs-tertiary-bg: #0f1422;
+
+  --wk-sec-bg: var(--bs-body-bg);
+  --wk-card-bg: var(--bs-secondary-bg);
+  --wk-text: var(--bs-body-color);
+  --wk-muted: var(--bs-secondary-color);
+  --wk-border: var(--bs-border-color);
+  --wk-shadow: 0 14px 28px rgba(2, 6, 23, 0.35);
+}
+
+/* Samakan html bg saat dark */
+body.is-dark[data-bs-theme="dark"] ~ html,
+body.is-dark[data-bs-theme="dark"] {
+  background-color: var(--bs-body-bg) !important;
+}
+
+/* ========== WRAPPERS ========== */
+.app-shell,
+header,
+main,
+footer,
+.container {
+  background: transparent !important;
+}
+
+/* Navbar */
+.navbar,
+.navbar.bg-body-tertiary,
+.navbar.bg-native {
+  background-color: var(--bs-body-bg) !important;
+  border-bottom: 1px solid var(--bs-border-color) !important;
+}
+
+/* ========== KOMONEN DASAR ========== */
+.card,
+.list-group,
+.list-group-item,
+.list-group-flush .list-group-item,
+.breadcrumb,
+.dropdown-menu,
+.offcanvas,
+.modal-content,
+.toast,
+.popover {
+  background-color: var(--bs-secondary-bg) !important;
+  color: var(--bs-body-color) !important;
+  border-color: var(--bs-border-color) !important;
+}
+
+.tooltip .tooltip-inner {
+  background-color: #111827 !important;
+  color: #f9fafb !important;
+}
+.tooltip .tooltip-arrow::before {
+  border-top-color: #111827 !important;
+}
+
+/* Form */
+.form-control,
+.form-select,
+.input-group-text {
+  background-color: var(--bs-body-bg) !important;
+  color: var(--bs-body-color) !important;
+  border-color: var(--bs-border-color) !important;
+}
+
+.form-label,
+.form-check-label,
+.form-text,
+.text-muted {
+  color: var(--bs-secondary-color) !important;
+}
+
+/* Table */
+.table {
+  color: var(--bs-body-color) !important;
+}
+.table > :not(caption) > * > * {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+.table-bordered,
+.table-bordered > :not(caption) > * {
+  border-color: var(--bs-border-color) !important;
+}
+.table-striped > tbody > tr:nth-of-type(odd) {
+  background-color: rgba(255, 255, 255, 0.03) !important;
+}
+
+/* ========== BOTTOM NAV ========== */
+.app-bottom-nav {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1020;
+  background-color: var(--bs-body-bg) !important;
+  border-top: 1px solid var(--bs-border-color) !important;
+}
+.app-bottom-nav .nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.app-bottom-nav .nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0.5rem 0.75rem;
+  font-weight: 600;
+  color: var(--bs-secondary-color) !important;
+}
+.app-bottom-nav .nav-link i {
+  font-size: 1.25rem;
+  line-height: 1;
+  color: currentColor;
+}
+.app-bottom-nav .nav-link .label {
+  font-size: 0.8rem;
+}
+.app-bottom-nav .active-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  display: block;
+  background: transparent;
+}
+.app-bottom-nav .nav-link.active {
+  color: var(--wk-accent-yellow) !important;
+}
+.app-bottom-nav .nav-link.active .active-dot {
+  background: var(--wk-accent-yellow);
+}
+
+/* ========== WK PRODUCT SKIN ========== */
+.wk-section {
+  background: var(--wk-sec-bg) !important;
+  color: var(--wk-text) !important;
+}
+.container-narrow {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+.wk-title {
+  color: var(--wk-text) !important;
+}
+
+.wk-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 999px;
+  background: var(--wk-card-bg) !important;
+  color: var(--wk-text) !important;
+  border: 1px solid var(--wk-border) !important;
+}
+
+.wk-list {
+  display: grid;
+  gap: 12px;
+}
+
+.wk-card {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--wk-card-bg) !important;
+  color: var(--wk-text) !important;
+  border: 1px solid var(--wk-border) !important;
+  box-shadow: var(--wk-shadow);
+}
+
+.wk-img {
+  width: 92px;
+  height: 92px;
+  object-fit: cover;
+  border-radius: 12px;
+  background: transparent;
+}
+.wk-info {
+  color: var(--wk-text) !important;
+}
+.wk-name {
+  font-weight: 700;
+}
+.wk-desc,
+.wk-muted {
+  color: var(--wk-muted) !important;
+}
+
+.wk-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.wk-price {
+  font-weight: 700;
+  color: var(--wk-text) !important;
+}
+
+/* Buttons */
+.btn-wk {
+  background: #f59e0b;
+  color: #0b0f17;
+  border: none;
+}
+.btn-outline-wk {
+  color: var(--bs-body-color);
+  border-color: var(--bs-border-color);
+}
+body.is-dark .btn-outline-wk {
+  color: var(--bs-body-color);
+  border-color: var(--bs-border-color);
+}
+
+/* Carousel readability */
+.carousel-caption {
+  background: rgba(0, 0, 0, 0.45);
+  color: #f3f4f6;
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+}
+body.is-dark .carousel-item img {
+  filter: brightness(0.72) contrast(1.05) saturate(0.95);
+}
+body.is-dark .carousel-control-prev-icon,
+body.is-dark .carousel-control-next-icon {
+  filter: invert(1) grayscale(1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+
+/* ========== Utilities ========== */
+.wk-text-white {
+  color: #f3f4f6 !important;
+}
+.wk-text-yellow {
+  color: var(--wk-accent-yellow) !important;
+}
+body.is-dark h1,
+body.is-dark h2,
+body.is-dark h3 {
+  color: var(--wk-accent-yellow);
+}
+
+.wk-yellow-on-dark {
+}
+body.is-dark .wk-yellow-on-dark {
+  color: var(--wk-accent-yellow) !important;
+}
+
+.wk-icon-yellow-on-dark i,
+.wk-icon-yellow-on-dark svg {
+}
+body.is-dark .wk-icon-yellow-on-dark i,
+body.is-dark .wk-icon-yellow-on-dark svg {
+  color: var(--wk-accent-yellow) !important;
+  fill: var(--wk-accent-yellow) !important;
+}
+
+.wk-text-black-on-dark {
+}
+body.is-dark .wk-text-black-on-dark {
+  color: #0b0f17 !important;
+}
+
+.wk-icon-black-on-dark i,
+.wk-icon-black-on-dark svg {
+}
+body.is-dark .wk-icon-black-on-dark i,
+body.is-dark .wk-icon-black-on-dark svg {
+  color: #0b0f17 !important;
+  fill: #0b0f17 !important;
+}
+
+/* Chip terang agar tetap kebaca saat dark */
+.wk-chip {
+  background: #f3f4f6;
+  color: #111827;
+  border-radius: 999px;
+  padding: 0.25rem 0.6rem;
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+body.is-dark .wk-chip {
+  background: #e5e7eb;
+  color: #0b0f17;
+}
+
+/* ========== HARD PATCHES (letakkan terakhir) ========== */
+/* Matikan kelas utilitas yang memaksa putih saat dark */
+body.is-dark .bg-white,
+body.is-dark .bg-light,
+body.is-dark .bg-body,
+body.is-dark .bg-body-tertiary {
+  background-color: var(--bs-secondary-bg) !important;
+}
+
+body.is-dark .text-dark {
+  color: var(--bs-body-color) !important;
+}
+
+body.is-dark .border,
+body.is-dark [class*="border-"] {
+  border-color: var(--bs-border-color) !important;
+}
+
+/* Inline style putih → paksa ikut dark */
+body.is-dark [style*="background:#fff"],
+body.is-dark [style*="background: #fff"],
+body.is-dark [style*="background-color:#fff"],
+body.is-dark [style*="background-color: #fff"],
+body.is-dark [style*="rgb(255,255,255)"] {
+  background-color: var(--bs-secondary-bg) !important;
+  color: var(--bs-body-color) !important;
+}
+/* Breadcrumb ikut tema: putih di light, gelap di dark */
+.breadcrumb {
+  background-color: var(--bs-secondary-bg) !important;
+  color: var(--bs-body-color) !important;
+  border: 1px solid var(--bs-border-color) !important;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+}
+
+/* Link & separator ikut tema */
+.breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+  color: var(--bs-secondary-color) !important;
+}
+.breadcrumb .breadcrumb-item a {
+  color: var(--bs-body-color) !important;
+  text-decoration: none;
+}
+.breadcrumb .breadcrumb-item a:hover {
+  color: var(--wk-accent-yellow) !important;
+}
+.breadcrumb .breadcrumb-item.active {
+  color: var(--bs-secondary-color) !important;
+}
+
+/* AKHIR DARK CSS MODE */
+
 html,
 body {
   height: 100%;
+  background-color: #fff;
+  color: #000;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+.form-check-label i {
+  color: #666;
+  transition: color 0.3s;
+}
+
+body.dark-mode .form-check-label i {
+  color: #ffeb3b;
 }
 body {
   margin: 0;
@@ -68,7 +477,7 @@ main {
   margin-bottom: 0;
 }
 .breadcrumb a {
-  color: #0d6efd;
+  color: #fddc1f;
   text-decoration: none;
 }
 .modern-breadcrumb {
@@ -121,7 +530,7 @@ main {
   background: rgba(255, 255, 255, 0.7);
 }
 #carouselExampleCaptions .carousel-indicators .active {
-  background: #f1c40f;
+  background: #fddc1f;
 }
 #carouselExampleCaptions .carousel-control-prev-icon,
 #carouselExampleCaptions .carousel-control-next-icon {
@@ -167,7 +576,7 @@ main {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  background: linear-gradient(135deg, #fddc1f, #f7fa60);
   color: #fff;
   font-weight: 700;
   display: flex;
@@ -191,7 +600,7 @@ main {
 }
 .modern-card.is-booked .status-tempat {
   background: #dbeafe;
-  color: #1e40af;
+  color: #fddc1f;
 }
 
 /* Grid tetap 1 kolom (mobile look) di perangkat besar */
@@ -251,7 +660,7 @@ main {
 .app-bottom-nav .nav-link:hover,
 .app-bottom-nav .nav-link:focus,
 .app-bottom-nav .nav-link.active {
-  color: #0d6efd;
+  color: #fddc1f;
   background: rgba(13, 110, 253, 0.06);
 }
 .active-dot {
@@ -264,7 +673,7 @@ main {
   transition: background 0.2s;
 }
 .nav-link.active .active-dot {
-  background: #0d6efd;
+  background: #fddc1f;
 }
 
 /* ===== Aksesibilitas ===== */
@@ -376,7 +785,7 @@ header .form-check-input:focus {
 .app-bottom-nav .nav-link:focus,
 .app-bottom-nav .nav-link.active,
 .app-bottom-nav .nav-link[aria-current="page"] {
-  color: #0d6efd;
+  color: #fddc1f;
   background: rgba(13, 110, 253, 0.06);
 }
 
@@ -394,7 +803,7 @@ header .form-check-input:focus {
 }
 .app-bottom-nav .nav-link.active .active-dot,
 .app-bottom-nav .nav-link[aria-current="page"] .active-dot {
-  background: #0d6efd;
+  background: #fddc1f;
 }
 
 /* Wrapper footer fix: selalu nempel bawah, tidak “lompat” */
@@ -489,7 +898,7 @@ header .navbar .navbar-brand .logo-size-navbar {
   border-radius: 10px;
   padding: 6px 10px;
   font-weight: 700;
-  color: #0b3a8f;
+  color: #8d8f0b;
   background: linear-gradient(135deg, #fff, #dbeafe);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
 }
@@ -504,7 +913,7 @@ header .navbar .navbar-brand .logo-size-navbar {
 
 /* Badge & status tetap terbaca di atas foto */
 .card-with-photo .no-tempat {
-  color: #0ea5e9;
+  color: #fddc1f;
   background: rgba(255, 255, 255, 0.9);
 }
 .card-with-photo.is-empty .status-tempat {
@@ -547,7 +956,7 @@ header .navbar .navbar-brand .logo-size-navbar {
   color: #0f172a;
 }
 .product-price {
-  color: #0d6efd;
+  color: #fddc1f;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -595,11 +1004,11 @@ header .navbar .navbar-brand .logo-size-navbar {
 .btn-add-to-cart {
   border-radius: 10px;
   border: 0;
-  background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+  background: linear-gradient(135deg, #e9da0e, #f3f63b);
   color: #fff;
   font-weight: 700;
   padding: 8px 12px;
-  box-shadow: 0 4px 14px rgba(59, 130, 246, 0.25);
+  box-shadow: 0 4px 14px rgba(246, 243, 59, 0.25);
 }
 .btn-add-to-cart:active {
   transform: translateY(1px);
@@ -641,10 +1050,10 @@ header .navbar .navbar-brand .logo-size-navbar {
   place-items: center;
   border-radius: 999px;
   border: 0;
-  background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+  background: linear-gradient(135deg, #e9da0e, #f3f63b);
   color: #fff;
   text-decoration: none;
-  box-shadow: 0 10px 24px rgba(59, 130, 246, 0.35);
+  box-shadow: 0 10px 24px rgba(243, 246, 59, 0.35);
   transition: transform 0.1s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 .btn-cart-fab:active {
@@ -685,4 +1094,173 @@ header .navbar .navbar-brand .logo-size-navbar {
     right: calc((100vw - 430px) / 2 + 12px);
     bottom: calc(var(--bottom-nav-h, 64px) + 14px);
   }
+  .product-card {
+    margin-bottom: 10px;
+  }
+  .cards-mobile {
+    margin-bottom: 30px;
+  }
+}
+
+/* ===== Empty State ===== */
+.cover-image-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: clamp(16px, 6vw, 40px);
+  margin: clamp(12px, 4vw, 32px) auto;
+  max-width: 680px;
+}
+
+.size-img-empty {
+  width: clamp(160px, 45vw, 320px); /* skala otomatis hp → desktop */
+  aspect-ratio: 1 / 1; /* jaga proporsinya, walau file bukan 1:1 */
+  object-fit: contain;
+  height: auto; /* fallback */
+  image-rendering: auto;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
+}
+
+.cover-image-empty h6 {
+  margin: 0.25rem 0 0;
+  font-weight: 600;
+}
+
+.cover-image-empty p {
+  margin: 0;
+  opacity: 0.8;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+}
+
+/* Sentuhan kecil untuk tema gelap (opsional) */
+@media (prefers-color-scheme: dark) {
+  .cover-image-empty p {
+    opacity: 0.9;
+  }
+  .size-img-empty {
+    filter: drop-shadow(0 6px 18px rgba(0, 0, 0, 0.25));
+  }
+}
+
+/* ===== Kartu produk (opsional rapi di mobile) ===== */
+.cards-mobile .product-card {
+  border-radius: 16px;
+  overflow: hidden;
+}
+.product-thumb {
+  width: 100%;
+  height: clamp(140px, 35vw, 220px);
+  object-fit: cover;
+  display: block;
+}
+.product-title {
+  font-weight: 600;
+  line-height: 1.2;
+}
+.product-price {
+  white-space: nowrap;
+  font-weight: 700;
+}
+/* Kartu produk dasar */
+.product-card {
+  border-radius: 16px;
+  overflow: hidden;
+  background: #fff;
+  position: relative;
+}
+.product-media {
+  position: relative;
+  overflow: hidden;
+}
+.product-thumb {
+  width: 100%;
+  height: clamp(140px, 35vw, 220px);
+  object-fit: cover;
+  display: block;
+}
+
+/* Badge Favorit */
+.badge-favorit {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  background: linear-gradient(90deg, #ffd166 0%, #fca311 100%);
+  color: #2b2d42; /* kontras, tetap kebaca di gradient */
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  user-select: none;
+}
+.badge-favorit i {
+  font-size: 12px;
+  margin-top: -1px;
+}
+
+/* Mode gelap opsional */
+@media (prefers-color-scheme: dark) {
+  .product-card {
+    background: #ffffff;
+  }
+  .badge-favorit {
+    color: #0b0d14;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  }
+}
+
+/* Tipografi */
+.product-title {
+  font-weight: 600;
+  line-height: 1.2;
+}
+.product-price {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Empty state (kalau belum ada) */
+.cover-image-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 0.5rem;
+  padding: clamp(16px, 6vw, 40px);
+  margin: clamp(12px, 4vw, 32px) auto;
+  max-width: 680px;
+}
+.size-img-empty {
+  width: clamp(160px, 45vw, 320px);
+  aspect-ratio: 1/1;
+  object-fit: contain;
+  height: auto;
+  filter: drop-shadow(0 4px 12px rgba(109, 104, 104, 0.08));
+}
+/* Scroll vertikal otomatis jika tinggi konten > 200px */
+.scroll-200 {
+  max-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* (Opsional) styling scrollbar */
+.scroll-200::-webkit-scrollbar {
+  width: 8px;
+}
+.scroll-200::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.06);
+  border-radius: 8px;
+}
+.scroll-200::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
 }
