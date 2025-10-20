@@ -174,7 +174,7 @@ class HomepageController extends BaseController
         $cart_count = $total_qty;
 
         return view('pelanggan/page-produk', [
-            'title'          => 'Homepage | Data Produk',
+            'title'          => 'Menu | Waroeng Kami',
             'nav_link'       => 'pesanan',
             'd_produk'       => $produk,
             'cart_items'     => $cart_items,
