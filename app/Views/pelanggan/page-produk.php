@@ -113,14 +113,24 @@
     }
 </style>
 
-<nav aria-label="breadcrumb" class="mb-3">
+<!-- Global Page Loader -->
+<div id="pageLoader" hidden aria-hidden="true">
+    <div class="pl-backdrop"></div>
+    <div class="pl-card">
+        <div class="pl-spinner" aria-label="Loading"></div>
+        <div class="pl-text">Memuat...</div>
+        <div class="pl-progress"><span class="pl-bar"></span></div>
+    </div>
+</div>
+
+<nav aria-label="breadcrumb page-root" class="mb-3">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="<?= base_url('/') ?>">Beranda</a></li>
         <li class="breadcrumb-item active" aria-current="page">Produk Kami</li>
     </ol>
 </nav>
 
-<div class="cards-mobile-wrap">
+<div class="cards-mobile-wrap page-root">
     <div class="row g-3 cards-mobile">
         <?php if (!empty($d_produk)): ?>
             <?php foreach ($d_produk as $p): ?>

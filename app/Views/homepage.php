@@ -440,10 +440,19 @@
     }
 </style>
 
+<!-- Global Page Loader -->
+<div id="pageLoader" hidden aria-hidden="true">
+    <div class="pl-backdrop"></div>
+    <div class="pl-card">
+        <div class="pl-spinner" aria-label="Loading"></div>
+        <div class="pl-text">Memuat...</div>
+        <div class="pl-progress"><span class="pl-bar"></span></div>
+    </div>
+</div>
 
 
 <!-- HERO / CAROUSEL -->
-<div id="carouselExampleCaptions" class="carousel slide carousel-fade mb-3"
+<div id="carouselExampleCaptions" class="carousel slide carousel-fade mb-3 page-root"
     data-bs-ride="carousel" data-bs-interval="4000" data-bs-pause="hover" data-bs-touch="true">
     <div class="carousel-indicators">
         <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0"
@@ -476,7 +485,7 @@
 </div>
 
 <!-- SEARCH -->
-<section class="wk-section">
+<section class="wk-section page-root">
     <div class="container-narrow">
         <form class="wk-search" method="get" action="<?= base_url('/') ?>">
             <i class="bi bi-search"></i>
@@ -496,7 +505,7 @@
 
 
 <!-- PRODUK (LIST VERTIKAL) -->
-<section class="wk-section">
+<section class="wk-section page-root">
     <div class="container-narrow">
         <div class="d-flex align-items-center justify-content-between mb-2">
             <div class="wk-title mb-0 wk-text-contrast">Menu Populer</div>

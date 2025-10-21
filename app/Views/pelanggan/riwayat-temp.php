@@ -372,8 +372,17 @@
 */
 </style>
 
+<!-- Global Page Loader -->
+<div id="pageLoader" hidden aria-hidden="true">
+    <div class="pl-backdrop"></div>
+    <div class="pl-card">
+        <div class="pl-spinner" aria-label="Loading"></div>
+        <div class="pl-text">Memuat...</div>
+        <div class="pl-progress"><span class="pl-bar"></span></div>
+    </div>
+</div>
 
-<div class="android-shell">
+<div class="android-shell page-root">
     <div class="android-frame">
         <div class="android-body">
             <nav aria-label="breadcrumb" class="mb-2">

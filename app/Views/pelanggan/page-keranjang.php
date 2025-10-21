@@ -138,8 +138,34 @@
             margin-bottom: 100px !important;
         }
     }
+
+    /* Overlay ringan di atas form saat submit */
+    form[data-submitting="1"] {
+        position: relative;
+    }
+
+    form[data-submitting="1"]::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, .05);
+        backdrop-filter: blur(1px);
+        border-radius: .75rem;
+        /* menyesuaikan card kamu */
+    }
 </style>
-<nav aria-label="breadcrumb " class="mb-3">
+
+<!-- Global Page Loader -->
+<div id="pageLoader" hidden aria-hidden="true">
+    <div class="pl-backdrop"></div>
+    <div class="pl-card">
+        <div class="pl-spinner" aria-label="Loading"></div>
+        <div class="pl-text">Memuat...</div>
+        <div class="pl-progress"><span class="pl-bar"></span></div>
+    </div>
+</div>
+
+<nav aria-label="breadcrumb page-root" class="mb-3">
     <ol class="breadcrumb">
         <li class="breadcrumb-item"><a href="<?= base_url('/') ?>">Beranda</a></li>
         <li class="breadcrumb-item"><a href="<?= base_url('pelanggan/produk') ?>">Produk</a></li>
@@ -147,7 +173,7 @@
     </ol>
 </nav>
 
-<div class="cards-mobile-wrap">
+<div class="cards-mobile-wrap mb-3 page-root">
     <div class="row g-3 cards-mobile mb-3">
 
         <?php if (!empty($items)): ?>
@@ -344,4 +370,79 @@
     });
 </script>
 
+<?= $this->endSection() ?>
+<?= $this->section('scripts') ?>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form[action*="pelanggan/keranjang/checkout"]');
+        if (!form) return;
+
+        form.addEventListener('submit', function(e) {
+            // Cegah double-submit (jaga2 user spam enter/klik)
+            if (form.dataset.submitting === '1') {
+                e.preventDefault();
+                return;
+            }
+            form.dataset.submitting = '1';
+
+            // 1) Clone nilai ke hidden input sebelum disable
+            const fields = form.querySelectorAll('input[name], textarea[name], select[name]');
+            fields.forEach(function(el) {
+                // Biarkan hidden yang sudah ada (mis. CSRF) apa adanya
+                if (el.type === 'hidden') return;
+
+                // Hanya ambil yang "bernilai" untuk tipe checkbox/radio
+                if ((el.type === 'checkbox' || el.type === 'radio') && !el.checked) return;
+
+                // SELECT multiple: kirim semua yang terseleksi
+                if (el.tagName === 'SELECT' && el.multiple) {
+                    Array.from(el.selectedOptions).forEach(function(opt) {
+                        const h = document.createElement('input');
+                        h.type = 'hidden';
+                        h.name = el.name;
+                        h.value = opt.value;
+                        form.appendChild(h);
+                    });
+                } else {
+                    const h = document.createElement('input');
+                    h.type = 'hidden';
+                    h.name = el.name;
+                    h.value = el.value;
+                    form.appendChild(h);
+                }
+            });
+
+            // 2) Disable semua kontrol form supaya tidak bisa diubah/klik lagi
+            const disableTargets = form.querySelectorAll('input, textarea, select, button');
+            disableTargets.forEach(function(el) {
+                // biarkan hidden tetap aktif (CSRF dsb.)
+                if (el.type !== 'hidden') el.disabled = true;
+                // tampilan non-interaktif ringan
+                el.classList.add('pe-none');
+            });
+
+            // 3) Ganti tombol submit jadi "Loading..."
+            const submitBtn = form.querySelector('button[type="submit"]');
+            if (submitBtn) {
+                submitBtn.dataset.originalHtml = submitBtn.innerHTML;
+                submitBtn.innerHTML =
+                    '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span> Loading...';
+                submitBtn.disabled = true;
+            }
+
+            // 4) (Opsional) matikan link aksi lain di area form supaya tidak diklik saat submit
+            const links = form.querySelectorAll('a');
+            links.forEach(a => {
+                a.classList.add('disabled', 'pe-none', 'opacity-50');
+                a.setAttribute('aria-disabled', 'true');
+                a.addEventListener('click', ev => ev.preventDefault(), {
+                    once: true
+                });
+            });
+
+            // Biarkan form lanjut submit normal (POST)
+            // Tidak perlu e.preventDefault()
+        });
+    });
+</script>
 <?= $this->endSection() ?>

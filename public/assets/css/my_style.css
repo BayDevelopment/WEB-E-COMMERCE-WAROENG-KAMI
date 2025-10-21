@@ -16,6 +16,15 @@ body {
   color: var(--bs-body-color);
 }
 
+/* animasi icon mode */
+#themeIcon,
+#themeStar {
+  transition: transform 0.2s ease, opacity 0.2s ease, color 0.2s ease;
+}
+.form-check-input:checked ~ .form-check-label #themeIcon {
+  transform: rotate(-12deg) scale(1.02);
+}
+
 /* ===== Wrapper transparan (biar warna dari body yang tampil) ===== */
 .app-shell,
 header,
@@ -775,5 +784,199 @@ button:focus-visible {
 @media (max-width: 576px) {
   .cards-mobile {
     margin-bottom: 100px !important;
+  }
+}
+.size-img-empty {
+  width: clamp(160px, 45vw, 320px); /* skala otomatis hp → desktop */
+  aspect-ratio: 1 / 1; /* jaga proporsinya, walau file bukan 1:1 */
+  object-fit: contain;
+  height: auto; /* fallback */
+  image-rendering: auto;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.08));
+}
+
+.cover-image-empty h6 {
+  margin: 0.25rem 0 0;
+  font-weight: 600;
+}
+
+.cover-image-empty p {
+  margin: 0;
+  opacity: 0.8;
+  font-size: clamp(0.9rem, 2.5vw, 1rem);
+}
+
+/* ===== Page Loader (supports dark & light) ===== */
+#pageLoader[hidden] {
+  display: none !important;
+}
+#pageLoader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+}
+#pageLoader .pl-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(2px);
+}
+#pageLoader .pl-card {
+  position: relative;
+  min-width: 220px;
+  max-width: 70vw;
+  padding: 16px 18px;
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  background: var(--bs-secondary-bg, #ffffff);
+  color: var(--bs-body-color, #111827);
+  border: 1px solid var(--bs-border-color, #e5e7eb);
+  transform: translateY(8px);
+  opacity: 0;
+  animation: pl-fade-in 0.18s ease-out forwards;
+}
+#pageLoader .pl-text {
+  margin-top: 10px;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 0.2px;
+}
+
+/* Spinner (tanpa lib) */
+#pageLoader .pl-spinner {
+  width: 28px;
+  height: 28px;
+  margin: 0 auto;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: var(--wk-accent-yellow, #f59e0b);
+  border-right-color: var(--wk-accent-yellow, #f59e0b);
+  animation: pl-spin 0.7s linear infinite;
+}
+
+/* Progress bar tipis */
+#pageLoader .pl-progress {
+  position: relative;
+  height: 4px;
+  margin-top: 12px;
+  background: rgba(0, 0, 0, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+#pageLoader .pl-progress .pl-bar {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 0%;
+  background: var(--wk-accent-yellow, #f59e0b);
+  animation: pl-line 1.6s ease-in-out infinite;
+}
+
+/* Animations */
+@keyframes pl-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes pl-line {
+  0% {
+    width: 0%;
+    transform: translateX(-10%);
+  }
+  50% {
+    width: 65%;
+    transform: translateX(25%);
+  }
+  100% {
+    width: 10%;
+    transform: translateX(100%);
+  }
+}
+@keyframes pl-fade-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  #pageLoader .pl-spinner {
+    animation: none;
+    border-right-color: transparent;
+  }
+  #pageLoader .pl-progress .pl-bar {
+    animation: none;
+    width: 50%;
+  }
+  #pageLoader .pl-card {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+}
+/* ====== Fade rules ====== */
+
+/* Konten halaman: tersembunyi dulu sampai siap */
+body:not(.pf-ready) .page-root {
+  opacity: 0;
+  transform: translateY(8px) scale(0.995);
+}
+body.pf-ready .page-root {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+
+/* Loader: state class-driven */
+#pageLoader[hidden] {
+  display: none !important;
+}
+#pageLoader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  opacity: 0; /* default */
+  transition: opacity 0.18s ease;
+}
+#pageLoader.is-visible {
+  opacity: 1;
+}
+#pageLoader.is-hiding {
+  opacity: 0;
+}
+
+/* (sudah ada) kartu loadermu akan ikut; tambahkan sedikit smoothing */
+#pageLoader .pl-card {
+  transform: translateY(8px);
+  opacity: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+}
+#pageLoader.is-visible .pl-card {
+  opacity: 1;
+  transform: translateY(0);
+}
+#pageLoader.is-hiding .pl-card {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+/* hormati reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  body:not(.pf-ready) .page-root {
+    opacity: 1;
+    transform: none;
+  }
+  body.pf-ready .page-root {
+    transition: none;
+  }
+  #pageLoader,
+  #pageLoader .pl-card {
+    transition: none;
   }
 }

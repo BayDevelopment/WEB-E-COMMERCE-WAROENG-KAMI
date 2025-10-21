@@ -7,7 +7,17 @@
     </ol>
 </nav>
 
-<div class="cards-mobile-wrap">
+<!-- Global Page Loader -->
+<div id="pageLoader" hidden aria-hidden="true">
+    <div class="pl-backdrop"></div>
+    <div class="pl-card">
+        <div class="pl-spinner" aria-label="Loading"></div>
+        <div class="pl-text">Memuat...</div>
+        <div class="pl-progress"><span class="pl-bar"></span></div>
+    </div>
+</div>
+
+<div class="cards-mobile-wrap page-root">
     <div class="row g-3 cards-mobile">
         <div class="col-lg-4">
             <div class="modern-card card-with-photo is-empty">
