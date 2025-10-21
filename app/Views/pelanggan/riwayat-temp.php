@@ -213,7 +213,7 @@
                                     <div class="col-left">
                                         <div class="fw-semibold mono"><?= esc($o['kode_pesanan']) ?></div>
                                         <div class="small muted">
-                                            <?= esc($o['tgl']) ?> • <?= (int)($o['item_count'] ?? 0) ?> item • <?= (int)($o['total_qty'] ?? 0) ?> porsi
+                                            <?= esc(waktu_indonesia($o['tgl'])) ?> <br> • <?= (int)($o['item_count'] ?? 0) ?> item • <?= (int)($o['total_qty'] ?? 0) ?> porsi
                                         </div>
 
                                         <?php if (!empty($o['produk_list'])): ?>

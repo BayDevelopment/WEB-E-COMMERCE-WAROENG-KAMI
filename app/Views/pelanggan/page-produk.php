@@ -1,6 +1,53 @@
 <?= $this->extend('templates/pelanggan/main') ?>
 <?= $this->section('public_content') ?>
 <style>
+    /* === Dark → text kuning === */
+    :root {
+        --wk-accent-yellow: #f59e0b;
+    }
+
+    /* Global: mayoritas teks jadi kuning saat dark */
+    [data-bs-theme="dark"] body {
+        color: var(--wk-accent-yellow) !important;
+    }
+
+    /* Judul, paragraf, link, breadcrumb, dsb. */
+    [data-bs-theme="dark"] h1,
+    [data-bs-theme="dark"] h2,
+    [data-bs-theme="dark"] h3,
+    [data-bs-theme="dark"] h4,
+    [data-bs-theme="dark"] h5,
+    [data-bs-theme="dark"] h6,
+    [data-bs-theme="dark"] p,
+    [data-bs-theme="dark"] a,
+    [data-bs-theme="dark"] .breadcrumb,
+    [data-bs-theme="dark"] .product-title,
+    [data-bs-theme="dark"] .product-desc,
+    [data-bs-theme="dark"] .wk-title,
+    [data-bs-theme="dark"] .wk-text-white {
+        color: var(--wk-accent-yellow) !important;
+    }
+
+    /* KECUALI: biarkan komponen ini tetap pakai warna body agar kontras terjaga */
+    [data-bs-theme="dark"] .btn,
+    [data-bs-theme="dark"] .btn *,
+    [data-bs-theme="dark"] .btn-add-to-cart,
+    [data-bs-theme="dark"] .badge,
+    [data-bs-theme="dark"] .cart-badge,
+    [data-bs-theme="dark"] .qty-group .btn-qty,
+    [data-bs-theme="dark"] .input-group-text,
+    [data-bs-theme="dark"] .form-control,
+    [data-bs-theme="dark"] .form-select,
+    [data-bs-theme="dark"] .toast,
+    [data-bs-theme="dark"] .modal-content {
+        color: var(--bs-body-color) !important;
+    }
+
+    /* Opsional: utilitas opt-in kalau mau target elemen tertentu saja */
+    [data-bs-theme="dark"] .tl-text-yellow-dark {
+        color: var(--wk-accent-yellow) !important;
+    }
+
     /* Shim dark mode untuk CSS lama yang hard-coded */
     [data-bs-theme="dark"] body {
         background-color: #0f1115 !important;
@@ -57,6 +104,13 @@
     [data-bs-theme="dark"] .wk-desc {
         color: var(--bs-secondary-color) !important;
     }
+
+    /* Mobile-only: ≤576px */
+    @media (max-width: 576px) {
+        .cards-mobile {
+            margin-bottom: 100px !important;
+        }
+    }
 </style>
 
 <nav aria-label="breadcrumb" class="mb-3">
@@ -71,7 +125,8 @@
         <?php if (!empty($d_produk)): ?>
             <?php foreach ($d_produk as $p): ?>
                 <div class="col-12">
-                    <div class="product-card shadow-sm border-0">
+                    <!-- tambahkan tl-card-white agar kartu putih saat LIGHT -->
+                    <div class="product-card shadow-sm tl-card-white">
                         <div class="product-media">
                             <img
                                 class="product-thumb"
@@ -81,7 +136,8 @@
                                 alt="<?= esc($p['nama_produk']) ?>">
 
                             <?php if ((int)($p['favorit'] ?? 0) === 1): ?>
-                                <span class="badge-favorit" aria-label="Menu Favorit">
+                                <!-- opsional: tl-badge-contrast biar badge tetap kebaca di light -->
+                                <span class="badge-favorit tl-badge-contrast" aria-label="Menu Favorit">
                                     <i class="bi bi-star-fill" aria-hidden="true"></i>
                                     Favorit
                                 </span>
@@ -90,46 +146,44 @@
 
                         <div class="product-body mb-2 p-3">
                             <div class="d-flex align-items-start justify-content-between">
-                                <h6 class="product-title mb-1 wk-yellow-on-dark"><?= esc($p['nama_produk']) ?></h6>
-                                <span class="product-price">Rp <?= number_format((float)$p['harga'], 0, ',', '.') ?></span>
+                                <!-- judul jadi kuning saat LIGHT -->
+                                <h6 class="product-title mb-1 tl-text-yellow-dark"><?= esc($p['nama_produk']) ?></h6>
+                                <!-- harga sudah kuning by design; kalau mau pastikan kuning di LIGHT: -->
+                                <span class="product-price tl-text-yellow">
+                                    Rp <?= number_format((float)$p['harga'], 0, ',', '.') ?>
+                                </span>
                             </div>
 
                             <?php if (!empty($p['deskripsi'])): ?>
                                 <p class="product-desc mb-2"><?= esc($p['deskripsi']) ?></p>
                             <?php endif; ?>
 
-                            <!-- Stack aksi: tombol vertikal rapi & full width -->
                             <div class="d-grid gap-2 mt-2">
-
-                                <!-- Tambah (submit ke keranjang, default jumlah=1) -->
-                                <form action="<?= base_url('pelanggan/produk') ?>" method="post" class="m-0">
+                                <form action="<?= site_url('pelanggan/produk') ?>" method="post" class="m-0">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="produk_id" value="<?= (int)$p['id_produk'] ?>">
                                     <input type="hidden" name="jumlah" value="1">
                                     <button class="btn btn-add-to-cart rounded-pill py-2 w-100 d-flex align-items-center justify-content-center gap-2"
                                         type="submit" aria-label="Tambah ke keranjang">
                                         <span>Tambah</span>
-                                        <i class="fa-solid fa-tags"></i>
+                                        <i class="bi bi-tag"></i>
                                     </button>
                                 </form>
 
-                                <form action="<?= base_url('pelanggan/produk') ?>" method="post" class="m-0 form-add-to-cart">
+                                <form action="<?= site_url('pelanggan/produk') ?>" method="post" class="m-0 form-add-to-cart">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="produk_id" value="<?= (int)$p['id_produk'] ?>">
                                     <input type="hidden" name="jumlah" value="1">
-                                    <input type="hidden" name="stay" value="1"><!-- ← tetap di page produk -->
-                                    <button class="btn btn-add-to-cart rounded-pill py-2 w-100 d-flex align-items-center justify-content-center gap-2" type="submit" aria-label="Masukkan ke keranjang">
+                                    <input type="hidden" name="stay" value="1">
+                                    <button class="btn btn-add-to-cart rounded-pill py-2 w-100 d-flex align-items-center justify-content-center gap-2"
+                                        type="submit" aria-label="Masukkan ke keranjang">
                                         <i class="bi bi-cart-plus me-1" aria-hidden="true"></i> Keranjangi
                                     </button>
                                 </form>
-
-
                             </div>
-
                         </div>
                     </div>
                 </div>
-
             <?php endforeach; ?>
         <?php else: ?>
             <div class="cover-image-empty">
@@ -152,36 +206,4 @@
 </div>
 
 
-<?= $this->endSection() ?>
-<?= $this->section('scripts') ?>
-<script>
-    document.querySelectorAll('.product-card').forEach((card) => {
-        const grp = card.querySelector('.qty-group');
-        if (!grp) return;
-        const input = grp.querySelector('.qty-input');
-        const minus = grp.querySelector('.btn-qty.minus');
-        const plus = grp.querySelector('.btn-qty.plus');
-        const form = card.querySelector('form');
-        const hidden = form?.querySelector('.jumlah-hidden');
-
-        const clamp = (n) => Math.max(0, Math.min(999, Number(n) || 0));
-        const sync = () => {
-            const v = clamp(input.value);
-            input.value = v;
-            if (hidden) hidden.value = v;
-        };
-
-        minus?.addEventListener('click', () => {
-            input.value = clamp(input.value) - 1;
-            sync();
-        });
-        plus?.addEventListener('click', () => {
-            input.value = clamp(input.value) + 1;
-            sync();
-        });
-        input?.addEventListener('input', sync);
-
-        sync(); // init
-    });
-</script>
 <?= $this->endSection() ?>

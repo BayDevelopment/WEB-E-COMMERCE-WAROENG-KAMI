@@ -42,7 +42,7 @@
         <?php if (!empty($items)): ?>
             <!-- FORM PEMESAN + DAFTAR ITEM -->
             <div class="col-12">
-                <form action="<?= base_url('pelanggan/keranjang/checkout') ?>" method="post" class="card border-0 shadow-sm">
+                <form action="<?= site_url('pelanggan/keranjang/checkout') ?>" method="post" class="card border-0 shadow-sm">
                     <?= csrf_field() ?>
 
                     <!-- Data Pemesan -->

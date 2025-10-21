@@ -34,48 +34,30 @@ class HomepageController extends BaseController
         $q  = trim((string) $this->request->getGet('q'));
         $db = db_connect();
 
+        $tProduk = $db->prefixTable('tb_produk');
+
         if ($q !== '') {
-            // Subquery: ambil produk yang PERNAH dipesan dan cocok di nama item,
-            // hitung waktu pesanan TERAKHIR per produk.
-            $sub = $db->table('tb_pesanan_item pi')
-                ->select('pi.produk_id, MAX(ps.created_at) AS last_order_at')
-                ->join('tb_pesanan ps', 'ps.id_pesanan = pi.pesanan_id', 'inner')
-                ->like('pi.nama_produk', $q)
-                ->groupBy('pi.produk_id');
-
-            $subSql = $sub->getCompiledSelect(); // untuk join sebagai derived table
-
-            // Join ke tb_produk yang "tersedia", urutkan dari pesanan terbaru, limit 3
-            $products = $db->table("($subSql) sx")
-                ->select('pr.id_produk AS id, pr.nama_produk AS nama, pr.deskripsi, pr.harga, pr.gambar, pr.slug, pr.status, sx.last_order_at')
-                ->join('tb_produk pr', 'pr.id_produk = sx.produk_id', 'inner')
-                ->where('pr.status', 'tersedia')
-                ->orderBy('sx.last_order_at', 'DESC')
+            // 🔎 Cari SEMUA produk di tb_produk (tanpa join & tanpa limit)
+            $products = $db->table($tProduk)
+                ->select('id_produk AS id, nama_produk AS nama, deskripsi, harga, gambar, slug, status')
+                ->where('status', 'tersedia')
+                ->groupStart()
+                ->like('nama_produk', $q, 'both')
+                ->orLike('deskripsi',  $q, 'both')
+                ->groupEnd()
+                // kalau tidak ada kolom created_at, hapus 2 baris orderBy di bawah
+                ->orderBy('created_at', 'DESC')
+                ->orderBy('id_produk', 'DESC')
+                ->get()->getResultArray();
+        } else {
+            // 📋 Default: hanya 3 produk terbaru
+            $products = $db->table($tProduk)
+                ->select('id_produk AS id, nama_produk AS nama, deskripsi, harga, gambar, slug, status')
+                ->where('status', 'tersedia')
+                ->orderBy('created_at', 'DESC') // hapus jika kolomnya tidak ada
+                ->orderBy('id_produk', 'DESC')
                 ->limit(3)
                 ->get()->getResultArray();
-
-            // Optional fallback: kalau kosong, coba cari langsung di tb_produk (biar UX nggak hening)
-            if (empty($products)) {
-                $products = $db->table('tb_produk')
-                    ->select('id_produk AS id, nama_produk AS nama, deskripsi, harga, gambar, slug, status')
-                    ->where('status', 'tersedia')
-                    ->like('nama_produk', $q)
-                    ->orderBy('created_at', 'DESC')
-                    ->orderBy('id_produk', 'DESC')
-                    ->limit(3)
-                    ->get()->getResultArray();
-            }
-        } else {
-            // MODE DEFAULT: semua produk "tersedia", urut terbaru (tanpa limit)
-            $builder = $db->table('tb_produk')
-                ->select('id_produk AS id, nama_produk AS nama, deskripsi, harga, gambar, slug, status')
-                ->where('status', 'tersedia');
-
-            // Jika tb_produk PUNYA created_at → pertahankan 2 baris di bawah; kalau tidak, hapus yang created_at.
-            $builder->orderBy('created_at', 'DESC');
-            $builder->orderBy('id_produk', 'DESC');
-
-            $products = $builder->get()->getResultArray();
         }
 
         return view('homepage', [
@@ -102,107 +84,69 @@ class HomepageController extends BaseController
 
     public function Data_Produk()
     {
-        // Produk tersedia
+        // 0) Pastikan session aktif (CartOwner::key akan set cookie jika belum ada)
+        Services::session();
+        $db = db_connect();
+
+        // 1) Katalog produk tersedia
         $produk = $this->ModelProduk
             ->where('status', 'tersedia')
             ->orderBy('favorit', 'DESC')
             ->orderBy('nama_produk', 'ASC')
             ->findAll();
 
-        // Pastikan ownerKey konsisten (jangan bikin baru kalau mau baca baris lama!)
-        $ownerKey = (string) ($this->cartOwnerKey() ?? '');
-        if ($ownerKey === '') {
-            // Catatan: kalau kamu bikin baru di sini, jelas tidak akan match data lama.
-            log_message('warning', 'owner_key kosong saat baca keranjang. Tidak dibuat baru agar tidak menutupi data lama.');
-        }
+        // 2) Ambil owner_key berbasis cookie (konsisten dengan Tambah_Produk/Data_Keranjang)
+        $ownerKey = \App\Libraries\CartOwner::key();
 
-        $db = \Config\Database::connect();
-
-        // Pakai prefixTable supaya aman dari dbprefix
+        // 3) Tabel berprefix
         $tKeranjang = $db->prefixTable('tb_keranjang');
         $tProduk    = $db->prefixTable('tb_produk');
 
-        // --- Query utama: by owner_key ---
-        $builder = $db->table($tKeranjang . ' k')
-            ->select('
-            k.id_keranjang  AS keranjang_id,
-            k.owner_key,
-            k.produk_id,
-            k.jumlah,
-            k.harga        AS harga_item,
-            k.subtotal     AS subtotal_item,
-            p.nama_produk,
-            p.gambar,
-            p.status       AS status_produk
-        ')
-            ->join($tProduk . ' p', 'p.id_produk = k.produk_id', 'left');
+        // 4) Agregat khusus owner_key ini
+        $agg = $db->table($tKeranjang)
+            ->select('COUNT(*) AS row_count,
+                  COALESCE(SUM(jumlah), 0)   AS total_qty,
+                  COALESCE(SUM(subtotal), 0) AS total_harga')
+            ->where('owner_key', $ownerKey)
+            ->get()->getRowArray() ?? [];
 
-        if ($ownerKey !== '') {
-            $builder->where('k.owner_key', $ownerKey);
-        }
+        $cart_rows  = (int)  ($agg['row_count']   ?? 0);
+        $cart_count = (int)  ($agg['total_qty']   ?? 0);   // badge
+        $cart_total = (float)($agg['total_harga'] ?? 0.0);
 
-        // Lihat SQL yang dikompilasi (debug)
-        $sqlCompiled = $builder->getCompiledSelect();
-        log_message('debug', 'SQL (by owner_key): {sql}', ['sql' => $sqlCompiled]);
+        // 5) Daftar item milik owner_key ini (untuk mini-cart di halaman produk)
+        $cart_items = $db->table($tKeranjang . ' k')
+            ->select('k.id_keranjang, k.produk_id, k.jumlah, k.harga, k.subtotal,
+                  p.nama_produk, p.gambar, p.slug, p.status AS status_produk')
+            ->join($tProduk . ' p', 'p.id_produk = k.produk_id', 'left')
+            ->where('k.owner_key', $ownerKey)
+            ->orderBy('k.id_keranjang', 'DESC')
+            ->get()->getResultArray();
 
-        $cart_items = $builder->orderBy('k.id_keranjang', 'DESC')->get()->getResultArray();
-
-        // Jika kosong, lakukan DIAGNOSIS:
-        if (empty($cart_items)) {
-            // 1) Apakah ada baris apapun di tabel keranjang?
-            $allCount = (int) $db->table($tKeranjang)->countAllResults();
-            log_message('debug', 'DIAG keranjang: countAll={c}', ['c' => $allCount]);
-
-            // 2) Ambil owner_key yang tersedia (sample)
-            $owners = $db->table($tKeranjang)
-                ->select('owner_key, COUNT(*) as c')
-                ->groupBy('owner_key')
-                ->orderBy('c', 'DESC')
-                ->limit(5)
-                ->get()->getResultArray();
-            log_message('debug', 'DIAG owner_key sample: {owners}', ['owners' => json_encode($owners)]);
-
-            // 3) Coba ambil TANPA filter owner_key: apakah join/tabelnya benar?
-            $probe = $db->table($tKeranjang . ' k')
-                ->select('k.id_keranjang, k.owner_key, k.produk_id, k.jumlah, k.harga, k.subtotal')
-                ->join($tProduk . ' p', 'p.id_produk = k.produk_id', 'left')
-                ->orderBy('k.id_keranjang', 'DESC')
-                ->limit(5)
-                ->get()->getResultArray();
-            log_message('debug', 'DIAG sample rows no-filter: {rows}', ['rows' => json_encode($probe)]);
-
-            // 4) Kalau ternyata owner_key di DB beda dengan $ownerKey yang aktif,
-            //    berarti masalah ada di cara kamu membentuk/menyimpan owner_key saat insert.
-        }
-
-        // Ringkasan
-        $row_count   = count($cart_items);
-        $total_qty   = 0;
-        $total_harga = 0;
-
-        foreach ($cart_items as $row) {
-            $qty      = (int) ($row['jumlah'] ?? 0);
-            $harga    = (int) ($row['harga_item'] ?? 0);
-            $subtotal = (int) ($row['subtotal_item'] ?? ($qty * $harga));
-            $total_qty   += $qty;
-            $total_harga += $subtotal;
-        }
-
-        // Badge: pilih row_count (jumlah baris) atau total_qty (total porsi)
-        $cart_count = $total_qty;
+        // (opsional) logging kecil
+        log_message('debug', 'DATA_PRODUK owner_key={ok}, cart_rows={r}, cart_qty={q}, cart_total={t}', [
+            'ok' => $ownerKey,
+            'r' => $cart_rows,
+            'q' => $cart_count,
+            't' => $cart_total
+        ]);
 
         return view('pelanggan/page-produk', [
             'title'          => 'Menu | Waroeng Kami',
             'nav_link'       => 'pesanan',
             'd_produk'       => $produk,
+
+            // Mini-cart info (khusus owner_key ini)
             'cart_items'     => $cart_items,
-            'cart_count'     => $cart_count,
-            'cart_total_qty' => $total_qty,
-            'cart_total'     => $total_harga,
-            'cart_row_count' => $row_count,
-            'owner_key_now'  => $ownerKey, // bisa kamu tampilkan sementara di view untuk cek
+            'cart_count'     => $cart_count,     // total qty → badge
+            'cart_total_qty' => $cart_count,
+            'cart_total'     => $cart_total,
+            'cart_row_count' => $cart_rows,
+
+            'owner_key_now'  => $ownerKey,       // tampilkan kecil saat debug
         ]);
     }
+
 
 
     /**
@@ -275,67 +219,63 @@ class HomepageController extends BaseController
 
     public function Data_Keranjang()
     {
-        // Pastikan sesi aktif, lalu ambil owner_key yang konsisten
-        \Config\Services::session();
+        // 0) Pastikan sesi & owner_key konsisten dengan Tambah_Produk
+        Services::session();                 // aman: start jika belum
+        $db       = db_connect();
         $ownerKey = \App\Libraries\CartOwner::key();
 
-        $db = db_connect();
+        // 1) Table names (prefix aware)
+        $tKeranjang = $db->prefixTable('tb_keranjang');
+        $tProduk    = $db->prefixTable('tb_produk');
+        $tPesanan   = $db->prefixTable('tb_pesanan');
 
-        // Ambil isi keranjang milik owner_key ini + info produk
-        $items = $db->table('tb_keranjang k')
-            ->select("
-            k.id_keranjang,
-            k.produk_id,
-            k.jumlah,
-            k.harga,
-            k.subtotal,
-            p.nama_produk,
-            p.gambar,
-            p.slug,
-            -- line_total fallback jika subtotal kosong/0
-            CASE
-                WHEN (k.subtotal IS NULL OR k.subtotal = 0)
-                    THEN (k.harga * k.jumlah)
-                ELSE k.subtotal
-            END AS line_total
-        ", false)
-            ->join('tb_produk p', 'p.id_produk = k.produk_id', 'left')
-            ->where('k.owner_key', $ownerKey)            // 🔒 filter ketat per owner_key
+        // 2) Items milik owner_key ini
+        $items = $db->table($tKeranjang . ' k')
+            ->select('
+            k.id_keranjang, k.owner_key, k.produk_id, k.jumlah, k.harga, k.subtotal,
+            p.nama_produk, p.gambar, p.slug, p.status AS status_produk
+        ')
+            ->join($tProduk . ' p', 'p.id_produk = k.produk_id', 'left')
+            ->where('k.owner_key', $ownerKey)
             ->orderBy('k.id_keranjang', 'ASC')
-            ->get()
-            ->getResultArray();
+            ->get()->getResultArray();
 
-        // Hitung total kuantitas & total harga
-        $totalQty = 0;
-        $total    = 0.0;
-        if (!empty($items)) {
-            $totalQty = array_sum(array_map(static fn($r) => (int)($r['jumlah'] ?? 0), $items));
-            $total    = array_sum(array_map(static fn($r) => (float)($r['line_total'] ?? 0), $items));
-        }
+        // 3) Agregat total qty & total harga
+        $agg = $db->table($tKeranjang)
+            ->select('COALESCE(SUM(jumlah),0) AS total_qty,
+                  COALESCE(SUM(subtotal),0) AS total')
+            ->where('owner_key', $ownerKey)
+            ->get()->getRowArray() ?? [];
 
-        // 🔑 Preview kode pesanan (mis. KP0001, KP0002, ...)
-        // Pastikan method previewKodePesanan($db, $prefix, $pad) tersedia di controller ini.
+        $totalQty = (int)   ($agg['total_qty'] ?? 0);
+        $total    = (float) ($agg['total']     ?? 0.0);
+
+        // 4) Preview kode pesanan (opsional)
         $kodePreview = $this->previewKodePesanan($db, 'KP', 4);
 
-        // === AMBIL MEJA YANG TIDAK SEDANG DIPAKAI PADA PESANAN AKTIF ===
-        // Sesuaikan daftar status aktif sesuai skema Anda (contoh di bawah).
-        $statusAktif = ['menunggu', 'diproses', 'dibayar'];
+        // 5) Meja yang belum dipakai di tb_pesanan
         $mejaM = new \App\Models\MejaModel();
 
-        // Subquery untuk meja yang sedang dipakai pada pesanan aktif
-        $sub = $db->table('tb_pesanan')
-            ->select('meja_id', false)
-            ->whereIn('status', $statusAktif)
+        // Subquery aman: where raw "IS NOT NULL"
+        $sub = $db->table($tPesanan)
+            ->select('meja_id')
             ->where('meja_id IS NOT NULL', null, false);
 
         $mejaTersedia = $mejaM->select('id_meja, kode_meja, nama_meja, kapasitas')
             ->where('is_active', 1)
-            ->where("id_meja NOT IN ({$sub->getCompiledSelect()})", null, false)
+            ->whereNotIn('id_meja', $sub)
             ->orderBy('kode_meja', 'ASC')
             ->findAll();
-        // === END ===
 
-        $data = [
+        // (opsional) logging
+        log_message('debug', 'KERANJANG owner_key_now={ok}, items={n}, total_qty={q}, total={t}', [
+            'ok' => $ownerKey,
+            'n' => count($items),
+            'q' => $totalQty,
+            't' => $total
+        ]);
+
+        return view('pelanggan/page-keranjang', [
             'title'                  => 'Keranjang | Waroeng Kami',
             'nav_link'               => 'pesanan',
             'items'                  => $items,
@@ -343,9 +283,8 @@ class HomepageController extends BaseController
             'total_qty'              => $totalQty,
             'kode_pesanan_view_only' => $kodePreview,
             'meja_tersedia'          => $mejaTersedia,
-        ];
-
-        return view('pelanggan/page-keranjang', $data);
+            'owner_key_now'          => $ownerKey,  // tampilkan kecil saat debug
+        ]);
     }
 
 
@@ -353,70 +292,70 @@ class HomepageController extends BaseController
 
     public function Tambah_Produk()
     {
-        // --- Ambil input aman ---
+        // 1) Input & validasi
         $produkId = (int) $this->request->getPost('produk_id');
         $jumlah   = max(1, (int) $this->request->getPost('jumlah')); // default 1
-
         if ($produkId <= 0) {
             return redirect()->back()->with('error', 'Produk tidak valid.');
         }
 
-        // --- Init service & model ---
-        Services::session();            // pastikan sesi aktif
-        $ownerKey = CartOwner::key();   // KONSISTEN dipakai di semua aksi cart
+        // 2) Owner key stabil (owner-<hex> dari cookie)
+        // CartOwner::key() sudah memulai sesi & menyetel cookie bila belum ada.
+        $ownerKey = CartOwner::key();
+        if ($ownerKey === '') {
+            return redirect()->back()->with('error', 'Sesi tidak valid. Coba lagi.');
+        }
 
-
+        // 3) Cek produk tersedia & harga
         $produkM = new ProdukModel();
-        $cartM   = new KeranjangModel();
-        $db      = db_connect();
-
-        // --- Validasi produk tersedia ---
-        $produk = $produkM->where('status', 'tersedia')->find($produkId);
-        if (! $produk) {
+        $produk  = $produkM->select('id_produk, harga, status')
+            ->where('status', 'tersedia')
+            ->find($produkId);
+        if (!$produk) {
             return redirect()->back()->with('error', 'Produk tidak ditemukan / sedang habis.');
         }
 
         $harga = (float) ($produk['harga'] ?? 0);
-
-        // --- Transaksi untuk konsistensi ---
-        $db->transStart();
-
-        // Cek apakah item untuk owner ini sudah ada
-        $exist = $cartM
-            ->where(['owner_key' => $ownerKey, 'produk_id' => $produkId])
-            ->first();
-
-        if ($exist) {
-            // Merge jumlah
-            $newJumlah   = (int) $exist['jumlah'] + $jumlah;
-            $newSubtotal = $harga * $newJumlah;
-
-            $cartM->update($exist['id_keranjang'], [
-                'jumlah'   => $newJumlah,
-                'harga'    => $harga,        // snapshot harga saat ini (opsional)
-                'subtotal' => $newSubtotal,
-            ]);
-        } else {
-            // Insert item baru milik owner_key ini
-            $cartM->insert([
-                'owner_key' => $ownerKey,
-                'produk_id' => $produkId,
-                'jumlah'    => $jumlah,
-                'harga'     => $harga,
-                'subtotal'  => $harga * $jumlah,
-            ]);
+        if ($harga <= 0) {
+            return redirect()->back()->with('error', 'Harga produk tidak valid.');
         }
 
-        $db->transComplete();
+        // 4) UPSERT atomic (perlu UNIQUE (owner_key, produk_id))
+        $cartM = new KeranjangModel();
+        $db    = $cartM->db;
 
-        if (! $db->transStatus()) {
-            return redirect()->back()->with('error', 'Gagal menambahkan ke keranjang.');
+        try {
+            $sql = "
+            INSERT INTO tb_keranjang (owner_key, produk_id, jumlah, harga, subtotal)
+            VALUES (?, ?, ?, ?, ROUND(? * ?, 2))
+            ON DUPLICATE KEY UPDATE
+                jumlah   = jumlah + VALUES(jumlah),
+                harga    = VALUES(harga),
+                subtotal = ROUND((jumlah + VALUES(jumlah)) * VALUES(harga), 2)
+        ";
+
+            $ok = $db->query($sql, [
+                $ownerKey,
+                $produkId,
+                $jumlah,
+                $harga,
+                $harga,
+                $jumlah,
+            ]);
+
+            if ($ok === false) {
+                $err = $db->error();
+                return redirect()->back()->with('error', 'Gagal menambahkan produk: ' . ($err['message'] ?? 'unknown'));
+            }
+        } catch (\Throwable $e) {
+            return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
 
-        return redirect()
-            ->to(base_url('pelanggan/keranjang'))
+        return redirect()->to(base_url('pelanggan/keranjang'))
             ->with('success', 'Berhasil menambahkan produk.');
     }
+
+
     public function delete_keranjang($id = null)
     {
         $id = (int) $id;
@@ -424,73 +363,77 @@ class HomepageController extends BaseController
             return redirect()->back()->with('error', 'ID keranjang tidak valid.');
         }
 
-        // Pastikan sesi aktif & owner_key konsisten
+        // Pastikan sesi aktif & dapatkan owner_key dari cookie persistent
         Services::session();
         $ownerKey = \App\Libraries\CartOwner::key();
 
-        $cartM = new KeranjangModel();
+        $cartM = new \App\Models\KeranjangModel();
 
-        // Ambil baris target
-        $row = $cartM->find($id);
+        // Ambil baris target berdasarkan ID saja
+        $row = $cartM->select('id_keranjang, owner_key')
+            ->where('id_keranjang', $id)
+            ->first();
+
         if (! $row) {
             return redirect()->back()->with('error', 'Item keranjang tidak ditemukan.');
         }
 
-        // Jika ada konsep user login, siapkan pengecekan alternatif
-        $userId = (int) (session('id_user') ?? 0);
-        $isOwnerBySession = ((string)($row['owner_key'] ?? '') === $ownerKey);
-        $isOwnerByUser    = ($userId > 0 && (int)($row['user_id'] ?? 0) === $userId);
-
-        if (! $isOwnerBySession && ! $isOwnerByUser) {
-            // Debug opsional (sementara):
-            // log_message('debug', 'DELETE DENIED. row_owner={row}, sess_owner={sess}', ['row'=>$row['owner_key']??null,'sess'=>$ownerKey]);
+        // Otorisasi: hanya boleh hapus jika owner_key sama
+        if ((string)($row['owner_key'] ?? '') !== $ownerKey) {
             return redirect()->back()->with('error', 'Anda tidak berhak menghapus item ini.');
         }
 
-        // Transaksi
-        $cartM->db->transBegin();
+        // Transaksi defensif
+        $db = $cartM->db;
+        $db->transBegin();
 
-        // Hapus defensif: cocokkan id + (owner_key atau user_id yang sah)
-        $builder = $cartM->where('id_keranjang', $id);
-        if ($isOwnerBySession) {
-            $builder->where('owner_key', $ownerKey);
-        } else {
-            $builder->where('user_id', $userId);
-        }
-        $builder->delete();
+        // Hapus dengan pengaman ganda: id_keranjang + owner_key
+        $cartM->where('id_keranjang', $id)
+            ->where('owner_key', $ownerKey)
+            ->delete();
 
-        if (! $cartM->db->transStatus() || $cartM->db->affectedRows() < 1) {
-            $cartM->db->transRollback();
+        // Pastikan tepat 1 baris terhapus
+        if (! $db->transStatus() || $db->affectedRows() !== 1) {
+            $db->transRollback();
             return redirect()->back()->with('error', 'Gagal menghapus item keranjang.');
         }
 
-        $cartM->db->transCommit();
+        $db->transCommit();
+
         return redirect()->to(base_url('pelanggan/keranjang'))
             ->with('success', 'Item keranjang telah dihapus.');
     }
 
+
     public function SuksesPembelian()
     {
-        Services::session(); // jaga-jaga
+        Services::session();
 
-        // Ambil dari Tempdata (bukan Flashdata)
+        // Tempdata di-set saat checkout: ['owner_key'=>..., 'kode'=>..., 'total'=>..., ...]
         $data = session()->getTempdata('order_success');
-
-        if (!$data) {
+        if (!$data || !is_array($data)) {
             return redirect()->to(base_url('pelanggan/produk'))
                 ->with('error', 'Anda belum melakukan pemesanan.');
         }
 
-        // (Opsional) Sliding TTL: perpanjang sesuai sisa waktu yang kamu simpan
-        // Kalau kamu ingin memperpanjang 30 menit setiap kali dibuka:
-        // session()->setTempdata('order_success', $data, 1800);
+        // Pengaman: pastikan ringkasan benar-benar milik owner sekarang
+        $ownerKeyNow = (string) CartOwner::key();
+        if (($data['owner_key'] ?? '') !== $ownerKeyNow) {
+            return redirect()->to(base_url('pelanggan/produk'))
+                ->with('error', 'Sesi berubah. Tidak dapat menampilkan ringkasan pesanan.');
+        }
+
+        // (Opsional) perpanjang TTL (mis. 15 menit lagi)
+        // session()->setTempdata('order_success', $data, 900);
 
         return view('pelanggan/page-sukses', [
-            'title'    => 'Pesanan Berhasil | Waroeng Kami',
-            'nav_link' => 'pesanan',
-            'order'    => $data,
+            'title'         => 'Pesanan Berhasil | Waroeng Kami',
+            'nav_link'      => 'pesanan',
+            'order'         => $data,
+            'owner_key_now' => $ownerKeyNow, // debug opsional
         ]);
     }
+
 
 
 
@@ -530,21 +473,22 @@ class HomepageController extends BaseController
     public function pesan_sekarang()
     {
         Services::session();
-        helper('ordercode');
+        helper('ordercode'); // pastikan helper aktif
         $db       = db_connect();
-        $ownerKey = CartOwner::key();
+        $ownerKey = \App\Libraries\CartOwner::key();
 
         $nama   = trim((string)$this->request->getPost('username'));
         $alamat = trim((string)$this->request->getPost('alamat'));
+
         if ($nama === '' || $alamat === '') {
             return redirect()->back()->with('error', 'Lengkapi data pemesan terlebih dahulu.');
         }
 
-        // Ambil input makan di tempat dan meja_id langsung tanpa validasi rumit
+        // Input sederhana
         $makanDitempat = (int)($this->request->getPost('makan_ditempat') ?? 0);
         $mejaIdInput   = (int)($this->request->getPost('meja_id') ?? 0);
 
-        // Ambil item keranjang
+        // Ambil item keranjang khusus milik owner_key ini
         $rows = $db->table('tb_keranjang k')
             ->select('k.id_keranjang, k.produk_id, k.jumlah, k.harga, k.subtotal, p.nama_produk')
             ->join('tb_produk p', 'p.id_produk = k.produk_id', 'left')
@@ -554,9 +498,10 @@ class HomepageController extends BaseController
 
         if (empty($rows)) {
             return redirect()->to(base_url('pelanggan/keranjang'))
-                ->with('error', 'Tidak ada item yang diproses.');
+                ->with('error', 'Keranjang kosong, tidak ada item untuk diproses.');
         }
 
+        // Hitung total dan siapkan batch item
         $grandTotal = 0.0;
         $totalQty   = 0;
         $itemsBatch = [];
@@ -564,7 +509,7 @@ class HomepageController extends BaseController
         foreach ($rows as $r) {
             $qty      = max(1, (int)$r['jumlah']);
             $harga    = (float)$r['harga'];
-            $subtotal = isset($r['subtotal']) ? (float)$r['subtotal'] : $qty * $harga;
+            $subtotal = (float)($r['subtotal'] ?: ($qty * $harga));
 
             $totalQty   += $qty;
             $grandTotal += $subtotal;
@@ -578,7 +523,7 @@ class HomepageController extends BaseController
             ];
         }
 
-        // Payload utama
+        // Payload utama untuk header pesanan
         $payload = [
             'owner_key'      => $ownerKey,
             'nama_pelanggan' => $nama,
@@ -587,20 +532,35 @@ class HomepageController extends BaseController
             'meja_id'        => $mejaIdInput ?: null,
             'total'          => $grandTotal,
             'status'         => 'menunggu_bayar',
+            'created_at'     => date('Y-m-d H:i:s'),
         ];
 
         try {
+            // Dapatkan kode pesanan dan ID otomatis via helper ordercode
             [$kode, $idPesanan] = claim_next_kode_from_pesanan($db, $payload, 'KP', 4);
 
+            // Mulai transaksi
             $db->transStart();
+
+            // Insert detail item
             foreach ($itemsBatch as &$it) {
                 $it['pesanan_id'] = $idPesanan;
+                $it['created_at'] = date('Y-m-d H:i:s');
             }
             $db->table('tb_pesanan_item')->insertBatch($itemsBatch);
+
+            // Kosongkan keranjang milik owner_key ini
             $db->table('tb_keranjang')->where('owner_key', $ownerKey)->delete();
+
             $db->transComplete();
 
-            $ttlSeconds = 1800;
+            if ($db->transStatus() === false) {
+                throw new \RuntimeException('Transaksi gagal disimpan.');
+            }
+
+            // ===== Tempdata untuk page sukses & riwayat =====
+            $ttlSeconds = 1800; // 30 menit
+
             $success = [
                 'id'          => $idPesanan,
                 'kode'        => $kode,
@@ -618,49 +578,70 @@ class HomepageController extends BaseController
                 'expires_at' => time() + $ttlSeconds,
             ], $ttlSeconds);
 
-            return redirect()->to(base_url('pelanggan/success'));
+            // ===== Langsung tampilkan halaman sukses =====
+            return view('pelanggan/page-sukses', [
+                'title'          => 'Pesanan Berhasil | Waroeng Kami',
+                'nav_link'       => 'pesanan',
+                'order'          => $success,
+                'owner_key_now'  => $ownerKey
+            ]);
         } catch (\Throwable $e) {
             if ($db->transStatus() === false) {
                 $db->transRollback();
             }
+
+            log_message('error', 'Gagal membuat pesanan: {msg}', ['msg' => $e->getMessage()]);
             return redirect()->to(base_url('pelanggan/keranjang'))
                 ->with('error', 'Gagal membuat pesanan: ' . $e->getMessage());
         }
     }
 
 
-
     public function RiwayatTemp()
     {
+        Services::session();
+        $db = db_connect();
+
+        // Ambil tempdata yang di-set saat checkout
         $access = session()->getTempdata('riwayat_access');
-        if (!$access || empty($access['owner_key'])) {
+        if (!$access || empty($access['owner_key']) || empty($access['expires_at'])) {
             return redirect()->to(base_url('pelanggan/produk'))
                 ->with('error', 'Akses riwayat sudah berakhir. Silakan lakukan pemesanan lagi.');
         }
 
-        $ownerKey = $access['owner_key'];
-        $remain   = max(0, (int)$access['expires_at'] - time());
-        $db = db_connect();
+        // Ambil owner_key dari tempdata & sesi aktif
+        $ownerKeyFromTemp = (string)$access['owner_key'];
+        $ownerKeyNow      = (string)\App\Libraries\CartOwner::key();
 
-        // Ambil hanya pesanan terbaru
+        // Pengaman utama — hanya pemilik yang sama boleh melihat
+        if ($ownerKeyNow !== $ownerKeyFromTemp) {
+            return redirect()->to(base_url('pelanggan/produk'))
+                ->with('error', 'Sesi berubah. Anda tidak berhak melihat riwayat ini.');
+        }
+
+        $remain = max(0, (int)$access['expires_at'] - time());
+
+        // Ambil pesanan terbaru milik owner_key ini
         $latest = $db->table('tb_pesanan')
             ->select('id_pesanan, kode_pesanan, total, status, created_at AS tgl', false)
-            ->where('owner_key', $ownerKey)
+            ->where('owner_key', $ownerKeyFromTemp)
             ->orderBy('created_at', 'DESC')
             ->orderBy('id_pesanan', 'DESC')
             ->limit(1)
-            ->get()->getRowArray();
+            ->get()
+            ->getRowArray();
 
         $orders = [];
         if ($latest) {
-            // Ambil ringkas item (qty & nama)
+            // Ambil item pesanan
             $items = $db->table('tb_pesanan_item')
                 ->select('nama_produk, qty')
                 ->where('pesanan_id', (int)$latest['id_pesanan'])
-                ->orderBy('id_pesanan_item', 'ASC') // sesuaikan dengan PK item mu
-                ->get()->getResultArray();
+                ->orderBy('id_pesanan_item', 'ASC')
+                ->get()
+                ->getResultArray();
 
-            // Buat label: "Nama ×qty"
+            // Buat label "Nama × qty"
             $labels = [];
             $totalQty = 0;
             foreach ($items as $it) {
@@ -669,27 +650,23 @@ class HomepageController extends BaseController
                 $labels[] = trim((string)$it['nama_produk']) . ' ×' . $qty;
             }
 
-            // Kalau itemnya banyak dan mau dipersingkat (opsional)
-            // $maxShow = 5;
-            // $more = max(0, count($labels) - $maxShow);
-            // $produkLabel = implode(', ', array_slice($labels, 0, $maxShow)) . ($more ? " +$more lainnya" : '');
-
             $produkLabel = implode(', ', $labels);
 
-            // Tambahkan ke data pesanan
+            // Tambahkan ringkasan ke data pesanan
             $latest['total_qty']    = $totalQty;
             $latest['item_count']   = count($items);
-            $latest['produk_list']  = $labels;       // array, kalau mau di-list satu-satu di view
-            $latest['produk_label'] = $produkLabel;  // string, langsung tampil
+            $latest['produk_list']  = $labels;
+            $latest['produk_label'] = $produkLabel;
 
             $orders = [$latest];
         }
 
         return view('pelanggan/riwayat-temp', [
-            'title'    => 'Riwayat Pesanan (Sementara) | Waroeng Kami',
-            'nav_link' => 'pesanan',
-            'orders'   => $orders, // 0/1 item
-            'remain'   => $remain,
+            'title'         => 'Riwayat Pesanan (Sementara) | Waroeng Kami',
+            'nav_link'      => 'pesanan',
+            'orders'        => $orders,
+            'remain'        => $remain,
+            'owner_key_now' => $ownerKeyNow,
         ]);
     }
 

@@ -433,6 +433,10 @@
         .wk-section {
             margin-bottom: 30px;
         }
+
+        .container-narrow {
+            margin-bottom: -80px;
+        }
     }
 </style>
 
@@ -495,7 +499,7 @@
 <section class="wk-section">
     <div class="container-narrow">
         <div class="d-flex align-items-center justify-content-between mb-2">
-            <div class="wk-title mb-0 wk-text-white">Menu Populer</div>
+            <div class="wk-title mb-0 wk-text-contrast">Menu Populer</div>
             <span class="wk-badge">Terbaru</span>
         </div>
 
@@ -512,7 +516,7 @@
 
                         <div class="wk-cta">
                             <div class="wk-price">Rp <?= number_format((float)($p['harga'] ?? 0), 0, ',', '.') ?></div>
-                            <form method="post" action="<?= base_url('pelanggan/keranjang') ?>">
+                            <form method="post" action="<?= site_url('pelanggan/produk') ?>">
                                 <?= csrf_field() ?>
                                 <input type="hidden" name="produk_id" value="<?= (int)$p['id'] ?>">
                                 <input type="hidden" name="jumlah" value="1">

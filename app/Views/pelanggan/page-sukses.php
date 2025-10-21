@@ -169,9 +169,9 @@
                                 <?= $itemCount ?> item • <?= $totalQty ?> porsi
                             </div>
                         </div>
-                        <div class="text-end">
+                        <div class="text-start">
                             <div class="text-uppercase small text-muted">Waktu</div>
-                            <div class="h6 fw-semibold mt-1"><?= $waktu ?></div>
+                            <div class="h6 fw-semibold mt-1"><?= esc(waktu_indonesia($waktu)) ?></div>
                         </div>
                     </div>
 
