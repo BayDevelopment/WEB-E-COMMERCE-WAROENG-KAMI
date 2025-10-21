@@ -27,6 +27,117 @@
             margin-bottom: 70px;
         }
     }
+
+    /* === Dark → text kuning === */
+    :root {
+        --wk-accent-yellow: #f5d20bff;
+    }
+
+    /* Global: mayoritas teks jadi kuning saat dark */
+    [data-bs-theme="dark"] body {
+        color: var(--wk-accent-yellow) !important;
+    }
+
+    /* Judul, paragraf, link, breadcrumb, dsb. */
+    [data-bs-theme="dark"] h1,
+    [data-bs-theme="dark"] h2,
+    [data-bs-theme="dark"] h3,
+    [data-bs-theme="dark"] h4,
+    [data-bs-theme="dark"] h5,
+    [data-bs-theme="dark"] h6,
+    [data-bs-theme="dark"] p,
+    [data-bs-theme="dark"] a,
+    [data-bs-theme="dark"] .breadcrumb,
+    [data-bs-theme="dark"] .product-title,
+    [data-bs-theme="dark"] .product-desc,
+    [data-bs-theme="dark"] .wk-title,
+    [data-bs-theme="dark"] .wk-text-white {
+        color: var(--wk-accent-yellow) !important;
+    }
+
+    /* KECUALI: biarkan komponen ini tetap pakai warna body agar kontras terjaga */
+    [data-bs-theme="dark"] .btn,
+    [data-bs-theme="dark"] .btn *,
+    [data-bs-theme="dark"] .btn-add-to-cart,
+    [data-bs-theme="dark"] .badge,
+    [data-bs-theme="dark"] .cart-badge,
+    [data-bs-theme="dark"] .qty-group .btn-qty,
+    [data-bs-theme="dark"] .input-group-text,
+    [data-bs-theme="dark"] .form-control,
+    [data-bs-theme="dark"] .form-select,
+    [data-bs-theme="dark"] .toast,
+    [data-bs-theme="dark"] .modal-content {
+        color: var(--bs-body-color) !important;
+    }
+
+    /* Opsional: utilitas opt-in kalau mau target elemen tertentu saja */
+    [data-bs-theme="dark"] .tl-text-yellow-dark {
+        color: var(--wk-accent-yellow) !important;
+    }
+
+    /* Shim dark mode untuk CSS lama yang hard-coded */
+    [data-bs-theme="dark"] body {
+        background-color: #0f1115 !important;
+        color: #e5e7eb !important;
+    }
+
+    /* Semua kontainer/kartu/list yang biasanya putih → ikut var Bootstrap */
+    [data-bs-theme="dark"] .bg-white,
+    [data-bs-theme="dark"] .wk-section,
+    [data-bs-theme="dark"] .container,
+    [data-bs-theme="dark"] .card,
+    [data-bs-theme="dark"] .wk-card,
+    [data-bs-theme="dark"] .product-card,
+    [data-bs-theme="dark"] .list-group-item,
+    [data-bs-theme="dark"] .offcanvas,
+    [data-bs-theme="dark"] .dropdown-menu {
+        background-color: var(--bs-body-bg) !important;
+        color: var(--bs-body-color) !important;
+        border-color: var(--bs-border-color) !important;
+    }
+
+    /* Input, input-group, badge, dsb. */
+    [data-bs-theme="dark"] .form-control,
+    [data-bs-theme="dark"] .form-select,
+    [data-bs-theme="dark"] .input-group-text {
+        background-color: var(--bs-body-bg) !important;
+        color: var(--bs-body-color) !important;
+        border-color: var(--bs-border-color) !important;
+    }
+
+    /* Teks & border utilitas */
+    [data-bs-theme="dark"] .text-dark {
+        color: var(--bs-body-color) !important;
+    }
+
+    [data-bs-theme="dark"] .text-muted {
+        color: var(--bs-secondary-color) !important;
+    }
+
+    [data-bs-theme="dark"] .border,
+    [data-bs-theme="dark"] .btn-outline-wk {
+        border-color: var(--bs-border-color) !important;
+    }
+
+    /* Button custom */
+    [data-bs-theme="dark"] .btn-wk {
+        background: #f59e0b !important;
+        color: #0b0f17 !important;
+        border: none !important;
+    }
+
+    /* Kartu produk spesifik (kalau ada kelas ini di page-produk) */
+    [data-bs-theme="dark"] .wk-grid .product-card .desc,
+    [data-bs-theme="dark"] .wk-desc {
+        color: var(--bs-secondary-color) !important;
+    }
+
+    /* Mobile-only: ≤576px */
+    @media (max-width: 576px) {
+        .cards-mobile {
+            margin-bottom: 100px !important;
+        }
+    }
 </style>
 <nav aria-label="breadcrumb " class="mb-3">
     <ol class="breadcrumb">
@@ -129,7 +240,7 @@
 
                                         <?php if ($itemId !== null): ?>
                                             <a href="#"
-                                                class="btn btn-outline-danger btn-sm d-inline-flex align-items-center gap-1"
+                                                class="btn btn-danger btn-sm d-inline-flex align-items-center gap-1"
                                                 onclick="return confirmDelete('<?= base_url('pelanggan/keranjang/delete/' . (int)$itemId) ?>')"
                                                 title="Hapus">
                                                 <i class="bi bi-trash"></i> Hapus

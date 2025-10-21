@@ -435,13 +435,6 @@ class HomepageController extends BaseController
     }
 
 
-
-
-
-
-
-
-
     // (Opsional) Ubah jumlah di halaman keranjang
     public function updateQty()
     {
@@ -459,14 +452,6 @@ class HomepageController extends BaseController
         $subtotal = $harga * $jumlah;
 
         $cartM->update($idKeranjang, ['jumlah' => $jumlah, 'subtotal' => $subtotal]);
-        return redirect()->back();
-    }
-
-    // (Opsional) Hapus baris dari keranjang
-    public function hapus()
-    {
-        $idKeranjang = (int) $this->request->getPost('id_keranjang');
-        (new KeranjangModel())->delete($idKeranjang);
         return redirect()->back();
     }
 
@@ -596,7 +581,6 @@ class HomepageController extends BaseController
         }
     }
 
-
     public function RiwayatTemp()
     {
         Services::session();
@@ -670,14 +654,14 @@ class HomepageController extends BaseController
         ]);
     }
 
-
-
     // AKHIR PRODUK
+
+
     public function tentang_kami()
     {
         $data = [
-            'title' => 'Homepage | Tentang Kami',
-            "nav_link" => 'tentang'
+            'title' => 'Tentang Kami | Waroeng Kami ',
+            'nav_link' => 'tentang'
         ];
         return view('pelanggan/page-tentang-kami', $data);
     }

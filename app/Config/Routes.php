@@ -14,3 +14,4 @@ $routes->post('pelanggan/keranjang/checkout', 'HomepageController::pesan_sekaran
 $routes->get('pelanggan/success', 'HomepageController::SuksesPembelian');
 $routes->get('pelanggan/riwayat', 'HomepageController::RiwayatTemp');
 $routes->get('pelanggan/pilih-tempat', 'HomepageController::tempat_pelanggan');
+$routes->get('tentang-kami', 'HomepageController::tentang_kami');

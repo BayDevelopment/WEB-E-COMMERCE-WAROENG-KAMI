@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
 /* ===== Core (satu kali) ===== */
 :root {
   --wk-accent-yellow: #f59e0b;
@@ -6,6 +7,7 @@ html,
 body {
   transition: background-color 0.25s, color 0.25s, border-color 0.25s,
     filter 0.25s;
+  font-family: "Poppins", sans-serif;
 }
 
 /* Base: ikut token Bootstrap yang aktif (tanpa blok light/dark) */
@@ -24,13 +26,295 @@ footer,
 }
 
 /* ===== Navbar ===== */
+header .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1040;
+  background: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  padding-block: 0.5rem;
+}
+.bg-native {
+  background: #fff;
+} /* untuk header sederhana */
+.modern-header {
+  background: linear-gradient(135deg, #fff 0%, #f8fafc 100%);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+}
+.logo-size-navbar {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  display: block;
+}
+.form-switch .form-check-input {
+  width: 40px;
+  height: 20px;
+  cursor: pointer;
+}
+@media (min-width: 768px) {
+  body {
+    background: #eef1f6;
+    padding: 20px 0;
+  }
+  .app-shell {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  }
+  #carouselExampleCaptions img {
+    height: 300px;
+  }
+}
+/* Header tuning (opsional, lebih rapi) */
+header .navbar .container {
+  padding-inline: 0.75rem; /* tepi kiri/kanan rapi */
+  min-height: 56px; /* tinggi minimum nyaman disentuh */
+}
+
+header .navbar-brand {
+  padding-block: 0.25rem;
+}
+
+header .form-check.form-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem; /* jarak icon & switch */
+  margin: 0;
+}
+
+header .form-check-label {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  color: #334155;
+}
+
+header .form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+}
+
+@media (min-width: 768px) {
+  /* tetap mobile-look di desktop, tapi beri napas */
+  header .navbar .container {
+    padding-inline: 1rem;
+  }
+}
 .navbar,
 .navbar.bg-body-tertiary,
 .navbar.bg-native {
   background-color: var(--bs-body-bg) !important;
   border-bottom: 1px solid var(--bs-border-color) !important;
 }
+/* Kunci lebar konten navbar agar tetap 430px di perangkat besar */
+header .navbar .container {
+  max-width: var(--phone-max);
+  margin: 0 auto;
+  padding-inline: 0.75rem;
+  min-height: 56px;
+}
 
+/* Logo konsisten */
+.logo-size-navbar {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+@media (min-width: 768px) {
+  .logo-size-navbar {
+    height: 52px;
+  }
+  header .navbar .container {
+    padding-inline: 1rem;
+  } /* sedikit lega di desktop */
+}
+/* ================== MOBILE-LOOK FRAME DI SEMUA DEVICE ================== */
+:root {
+  --phone-max: 430px;
+  --bottom-nav-h: 64px; /* keep */
+}
+
+/* Hindari geser horizontal di semua device */
+html,
+body {
+  overflow-x: hidden;
+}
+
+/* Frame utama: selalu seperti HP, center di layar besar */
+.app-shell {
+  width: 100%;
+  max-width: var(--phone-max);
+  margin: 0 auto;
+  min-height: 100svh;
+  background: var(--bs-body-bg);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: none; /* di mobile tidak berbayang */
+}
+
+/* ================== HEADER / NAVBAR ================== */
+/* Pakai warna tema (bukan #fff) agar ikut dark/light */
+header .navbar,
+.navbar.bg-native {
+  position: sticky;
+  top: 0;
+  z-index: 1040;
+  background-color: var(--bs-body-bg) !important;
+  border-bottom: 1px solid var(--bs-border-color) !important;
+  padding-block: 0.5rem;
+}
+
+/* Kunci lebar konten navbar agar tetap 430px di perangkat besar */
+header .navbar .container {
+  max-width: var(--phone-max);
+  margin: 0 auto;
+  padding-inline: 0.75rem;
+  min-height: 56px;
+}
+
+/* Logo konsisten */
+.logo-size-navbar {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}
+@media (min-width: 768px) {
+  .logo-size-navbar {
+    height: 52px;
+  }
+  header .navbar .container {
+    padding-inline: 1rem;
+  } /* sedikit lega di desktop */
+}
+
+/* ================== BOTTOM NAV SELALU DI DALAM FRAME HP ================== */
+.app-bottom-nav {
+  position: fixed;
+  z-index: 1030;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: var(--phone-max);
+  height: var(--bottom-nav-h);
+  background: var(--bs-body-bg) !important;
+  border-top: 1px solid var(--bs-border-color) !important;
+  box-shadow: 0 -6px 18px rgba(0, 0, 0, 0.06);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Pastikan konten tidak ketiban bottom nav */
+main {
+  padding-bottom: calc(var(--bottom-nav-h) + 16px) !important;
+}
+
+/* ================== GRID & LIST TETAP 1 KOLOM DI LAYAR BESAR ================== */
+@media (min-width: 768px) {
+  .cards-mobile > [class^="col-"],
+  .cards-mobile > [class*=" col-"] {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
+
+/* Tambahkan napas visual saat dibuka di tablet/desktop (frame HP tetap) */
+@media (min-width: 768px) {
+  body {
+    background: #eef1f6;
+    padding: 20px 0;
+  }
+  .app-shell {
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+  }
+}
+
+/* ================== BREADCRUMB & KOMPONEN IKUT TEMA ================== */
+.breadcrumb {
+  background-color: var(--bs-secondary-bg) !important;
+  color: var(--bs-body-color) !important;
+  border: 1px solid var(--bs-border-color) !important;
+  border-radius: 12px;
+  padding: 0.5rem 1rem;
+}
+.breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+  color: var(--bs-secondary-color) !important;
+}
+.breadcrumb .breadcrumb-item a {
+  color: var(--bs-body-color) !important;
+  text-decoration: none;
+}
+.breadcrumb .breadcrumb-item a:hover {
+  color: var(--wk-accent-yellow) !important;
+}
+.breadcrumb .breadcrumb-item.active {
+  color: var(--bs-secondary-color) !important;
+}
+
+/* ================== KARTU PRODUK & WRAPPER MOBILE SPACING ================== */
+.cards-mobile-wrap {
+  width: 100%;
+  max-width: var(--phone-max);
+  margin: 0 auto;
+  padding: 8px 0;
+}
+@media (min-width: 768px) {
+  .product-card {
+    margin-bottom: 10px;
+  }
+  .cards-mobile {
+    margin-bottom: 30px;
+  }
+}
+
+/* ================== DARK MODE COMPAT (PAKAI VARIABEL) ================== */
+/* Pastikan semua elemen utilitas “putih” ikut gelap saat dark */
+body.is-dark .bg-white,
+body.is-dark .bg-light,
+body.is-dark .bg-body,
+body.is-dark .bg-body-tertiary {
+  background-color: var(--bs-secondary-bg) !important;
+}
+body.is-dark .text-dark {
+  color: var(--bs-body-color) !important;
+}
+body.is-dark .border,
+body.is-dark [class*="border-"] {
+  border-color: var(--bs-border-color) !important;
+}
+
+/* Badge favorit tetap kebaca di kedua tema */
+.badge-favorit {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  background: linear-gradient(90deg, #ffd166 0%, #fca311 100%);
+  color: #2b2d42; /* kontras, tetap kebaca di gradient */
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+  user-select: none;
+}
+.badge-favorit i {
+  font-size: 12px;
+  margin-top: -1px;
+}
+
+/* Mode gelap opsional */
+@media (prefers-color-scheme: dark) {
+  .product-card {
+    background: #ffffff;
+  }
+  .badge-favorit {
+    color: #0b0d14;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+  }
+}
 /* ===== Komponen dasar ===== */
 .card,
 .list-group,
@@ -234,6 +518,73 @@ main {
   color: #f3f4f6;
   border-radius: 12px;
   padding: 0.75rem 1rem;
+}
+body.is-dark .carousel-item img {
+  filter: brightness(0.72) contrast(1.05) saturate(0.95);
+}
+body.is-dark .carousel-control-prev-icon,
+body.is-dark .carousel-control-next-icon {
+  filter: invert(1) grayscale(1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+}
+/* ===== Carousel (fade + mobile frame) ===== */
+#carouselExampleCaptions {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+}
+#carouselExampleCaptions img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+}
+/* Caption fade-up */
+#carouselExampleCaptions .carousel-caption {
+  background: rgba(0, 0, 0, 0.45);
+  border-radius: 10px;
+  padding: 10px 12px;
+  bottom: 15px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+#carouselExampleCaptions .carousel-item.active .carousel-caption {
+  opacity: 1;
+  transform: translateY(0);
+}
+#carouselExampleCaptions .carousel-caption h5 {
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+#carouselExampleCaptions .carousel-caption p {
+  font-size: 0.8rem;
+  margin-top: 5px;
+}
+/* Indicators & controls kecil */
+#carouselExampleCaptions .carousel-indicators [data-bs-target] {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.7);
+}
+#carouselExampleCaptions .carousel-indicators .active {
+  background: #fddc1f;
+}
+#carouselExampleCaptions .carousel-control-prev-icon,
+#carouselExampleCaptions .carousel-control-next-icon {
+  width: 30px;
+  height: 30px;
+}
+/* Fade antar slide (sinkron dengan .carousel-fade di HTML) */
+#carouselExampleCaptions.carousel-fade .carousel-item {
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+}
+#carouselExampleCaptions.carousel-fade .carousel-item.active {
+  opacity: 1;
 }
 
 /* ===== Product Card ===== */

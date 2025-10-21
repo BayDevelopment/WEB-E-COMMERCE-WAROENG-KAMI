@@ -3,7 +3,7 @@
 <style>
     /* === Dark → text kuning === */
     :root {
-        --wk-accent-yellow: #f59e0b;
+        --wk-accent-yellow: #f5d20bff;
     }
 
     /* Global: mayoritas teks jadi kuning saat dark */

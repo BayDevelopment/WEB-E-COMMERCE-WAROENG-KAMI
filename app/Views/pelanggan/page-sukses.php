@@ -2,7 +2,9 @@
 <?= $this->section('public_content') ?>
 
 <style>
-    /* ====== MOBILE-IN-DESKTOP SHELL (simulate Android on wide screens) ====== */
+    /* =======================
+   ANDROID-LIKE MOBILE FRAME
+   ======================= */
     .android-shell {
         display: grid;
         place-content: start center;
@@ -11,6 +13,7 @@
         background:
             radial-gradient(1200px 800px at 50% -200px, rgba(0, 0, 0, .05), transparent 60%),
             linear-gradient(180deg, rgba(0, 0, 0, .03), transparent 55%);
+        border-radius: 15px;
     }
 
     .android-frame {
@@ -42,6 +45,8 @@
     :root {
         --brand-accent: #ffd24d;
         --brand-accent-ink: #1f1f1f;
+        --wk-accent-yellow: #f5d20bff;
+        /* kuning untuk dark text */
     }
 
     .success-badge {
@@ -89,7 +94,7 @@
         width: 100%;
     }
 
-    /* Breadcrumb → compact & single-line inside frame */
+    /* Breadcrumb → compact */
     .breadcrumb {
         margin-bottom: 8px;
         font-size: .9rem;
@@ -99,9 +104,7 @@
         padding-right: .35rem;
     }
 
-    /* Responsive rules:
-     - On phones: frame fills width (<=430px)
-     - On tablets/PC: centered, tetap 430px (rasa Android) */
+    /* Responsive */
     @media (min-width: 576px) {
 
         .android-body,
@@ -115,7 +118,151 @@
             padding-top: 24px;
         }
     }
+
+    /* Mobile-only helper */
+    @media (max-width: 576px) {
+        .cards-mobile {
+            margin-bottom: 100px !important;
+        }
+    }
+
+    /* =======================
+   DARK MODE THEME SYSTEM
+   ======================= */
+
+    /* 1) Variabel Bootstrap untuk dark (body full dark, card sedikit lebih terang) */
+    [data-bs-theme="dark"] {
+        /* Body benar-benar gelap */
+        --bs-body-bg: #0f1115;
+        /* body/background utama */
+        --bs-body-color: #e5e7eb;
+        /* fallback teks non-kuning */
+        --bs-secondary-color: #9aa4b2;
+        /* teks sekunder */
+        --bs-border-color: #1f2937;
+        /* border */
+        --bs-secondary-bg: #151a21;
+        /* bg kontainer/card */
+        --bs-tertiary-bg: #10151b;
+        /* bg elemen nested */
+    }
+
+    /* 2) Body full dark */
+    [data-bs-theme="dark"] body {
+        background-color: var(--bs-body-bg) !important;
+        color: var(--bs-body-color) !important;
+        /* akan ditimpa ke kuning di rule global text */
+    }
+
+    /* 3) Android shell & frame penyesuaian dark */
+    [data-bs-theme="dark"] .android-shell {
+        background:
+            radial-gradient(1200px 800px at 50% -200px, rgba(255, 255, 255, .04), transparent 60%),
+            linear-gradient(180deg, rgba(255, 255, 255, .03), transparent 55%);
+    }
+
+    [data-bs-theme="dark"] .android-frame {
+        background: var(--bs-secondary-bg);
+        box-shadow:
+            0 10px 30px rgba(0, 0, 0, .5),
+            0 2px 8px rgba(0, 0, 0, .4);
+    }
+
+    /* 4) Global: mayoritas teks kuning saat dark */
+    [data-bs-theme="dark"] body,
+    [data-bs-theme="dark"] h1,
+    [data-bs-theme="dark"] h2,
+    [data-bs-theme="dark"] h3,
+    [data-bs-theme="dark"] h4,
+    [data-bs-theme="dark"] h5,
+    [data-bs-theme="dark"] h6,
+    [data-bs-theme="dark"] p,
+    [data-bs-theme="dark"] a,
+    [data-bs-theme="dark"] .breadcrumb,
+    [data-bs-theme="dark"] .product-title,
+    [data-bs-theme="dark"] .product-desc,
+    [data-bs-theme="dark"] .wk-title,
+    [data-bs-theme="dark"] .wk-text-white {
+        color: var(--wk-accent-yellow) !important;
+    }
+
+    /* 5) Pengecualian: biar kontras & aksesibilitas komponen UI */
+    [data-bs-theme="dark"] .btn,
+    [data-bs-theme="dark"] .btn *,
+    [data-bs-theme="dark"] .btn-add-to-cart,
+    [data-bs-theme="dark"] .badge,
+    [data-bs-theme="dark"] .cart-badge,
+    [data-bs-theme="dark"] .qty-group .btn-qty,
+    [data-bs-theme="dark"] .input-group-text,
+    [data-bs-theme="dark"] .form-control,
+    [data-bs-theme="dark"] .form-select,
+    [data-bs-theme="dark"] .toast,
+    [data-bs-theme="dark"] .modal-content {
+        color: var(--bs-body-color) !important;
+        /* bukan kuning */
+    }
+
+    /* 6) Kontainer/kartu/list → bg berbeda dari body + border sesuai var */
+    [data-bs-theme="dark"] .bg-white,
+    [data-bs-theme="dark"] .wk-section,
+    [data-bs-theme="dark"] .container,
+    [data-bs-theme="dark"] .card,
+    [data-bs-theme="dark"] .wk-card,
+    [data-bs-theme="dark"] .product-card,
+    [data-bs-theme="dark"] .soft-card,
+    [data-bs-theme="dark"] .list-group-item,
+    [data-bs-theme="dark"] .offcanvas,
+    [data-bs-theme="dark"] .dropdown-menu {
+        background-color: var(--bs-secondary-bg) !important;
+        /* beda dari body */
+        color: var(--bs-body-color) !important;
+        /* fallback non-kuning */
+        border-color: var(--bs-border-color) !important;
+    }
+
+    /* 7) Input, input-group, badge, dsb. mengikuti palet dark */
+    [data-bs-theme="dark"] .form-control,
+    [data-bs-theme="dark"] .form-select,
+    [data-bs-theme="dark"] .input-group-text {
+        background-color: var(--bs-tertiary-bg) !important;
+        color: var(--bs-body-color) !important;
+        border-color: var(--bs-border-color) !important;
+    }
+
+    /* 8) Utilitas teks */
+    [data-bs-theme="dark"] .text-dark {
+        color: var(--bs-body-color) !important;
+    }
+
+    [data-bs-theme="dark"] .text-muted {
+        color: var(--bs-secondary-color) !important;
+    }
+
+    /* 9) Border & outline */
+    [data-bs-theme="dark"] .border,
+    [data-bs-theme="dark"] .btn-outline-wk {
+        border-color: var(--bs-border-color) !important;
+    }
+
+    /* 10) Tombol custom kuning */
+    [data-bs-theme="dark"] .btn-wk {
+        background: #f59e0b !important;
+        color: #0b0f17 !important;
+        border: none !important;
+    }
+
+    /* 11) Deskripsi/teks sekunder di kartu produk */
+    [data-bs-theme="dark"] .wk-grid .product-card .desc,
+    [data-bs-theme="dark"] .wk-desc {
+        color: var(--bs-secondary-color) !important;
+    }
+
+    /* 12) Opsional: utilitas opt-in kalau mau target elemen tertentu jadi kuning */
+    [data-bs-theme="dark"] .tl-text-yellow-dark {
+        color: var(--wk-accent-yellow) !important;
+    }
 </style>
+
 
 <div class="android-shell">
     <div class="android-frame mb-3">

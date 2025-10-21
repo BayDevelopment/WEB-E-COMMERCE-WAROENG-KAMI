@@ -16,7 +16,7 @@
              <!-- TENTANG KAMI -->
              <li class="nav-item flex-fill">
                  <a class="nav-link <?= ($nav_link === 'tentang') ? 'active' : '' ?>"
-                     href="<?= base_url('tentang'); ?>"
+                     href="<?= base_url('tentang-kami'); ?>"
                      aria-label="Tentang Kami">
                      <i class="bi bi-info-circle"></i>
                      <span class="label">Tentang Kami</span>
