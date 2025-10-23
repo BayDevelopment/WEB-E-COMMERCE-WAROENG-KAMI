@@ -1,0 +1,823 @@
+/* ============================
+   Waroeng Kami Admin Theme
+   Default: LIGHT
+   Toggle DARK via body.dark (alias: .theme-dark)
+   ============================ */
+
+/* ---- FONT ---- */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap");
+
+/* ---- ROOT (LIGHT) ---- */
+:root {
+  /* brand */
+  --wk-accent: #facc15; /* kuning */
+  --wk-accent-600: #eab308;
+  --wk-accent-700: #ca8a04;
+  --wk-on-accent: #0b0d14;
+
+  /* base (LIGHT) */
+  --wk-text: #0b0d14;
+  --wk-text-sidemenu: #facc15;
+  --wk-text-secondary: #64748b;
+  --wk-surface: #f8fafc; /* page bg */
+  --wk-card: #ffffff; /* card/nav bg */
+  --wk-border: rgba(2, 6, 23, 0.1);
+  --wk-link: #0ea5e9;
+
+  /* NAV backgrounds (LIGHT) */
+  --wk-sbnav-bg: #fffa5e; /* topnav fallback */
+  --wk-sbnav-bg-menu: #fffa5e; /* sidebar fallback */
+  --wk-sbnav-bg-gradient: linear-gradient(
+    90deg,
+    rgba(255, 250, 94, 1) 0%,
+    rgba(235, 255, 245, 1) 0%,
+    rgba(255, 234, 48, 0.58) 100%
+  ); /* topnav gradient (horizontal) */
+  --wk-sbnav-bg-gradient-sidemenu: linear-gradient(
+    180deg,
+    rgba(255, 250, 94, 1) 0%,
+    rgba(235, 255, 245, 1) 0%,
+    rgba(255, 234, 48, 0.58) 100%
+  ); /* sidebar gradient (vertical) */
+
+  /* elevation */
+  --wk-shadow-1: 0 4px 14px rgba(2, 6, 23, 0.06), 0 1px 2px rgba(2, 6, 23, 0.04);
+  --wk-shadow-2: 0 12px 28px rgba(2, 6, 23, 0.1),
+    0 2px 10px rgba(2, 6, 23, 0.06);
+
+  /* radius & spacing */
+  --wk-radius: 16px;
+  --wk-card-pad: 16px;
+}
+
+/* ---- DARK (aktif bila body.dark / .theme-dark) ---- */
+body.dark,
+.theme-dark {
+  /* base (DARK) */
+  --wk-text: #ffffff; /* teks default putih */
+  --wk-text-secondary: #9aa6b2;
+  --wk-surface: #000000; /* halaman hitam pekat */
+  --wk-card: #0f1115; /* card/nav sedikit > hitam */
+  --wk-border: rgba(148, 163, 184, 0.16);
+  --wk-link: #93c5fd;
+
+  /* NAV backgrounds (DARK) —> paksa gelap */
+  --wk-sbnav-bg: #000000; /* topnav fallback */
+  --wk-sbnav-bg-gradient: none; /* topnav: matikan gradient */
+  --wk-sbnav-bg-menu: #000000; /* sidebar fallback */
+  --wk-sbnav-bg-gradient-sidemenu: none; /* sidebar: matikan gradient */
+  --wk-text-sidemenu: var(--wk-text); /* teks sidebar ikut putih */
+
+  /* elevation */
+  --wk-shadow-1: 0 4px 16px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.25);
+  --wk-shadow-2: 0 14px 34px rgba(0, 0, 0, 0.45), 0 2px 12px rgba(0, 0, 0, 0.3);
+
+  color-scheme: dark;
+}
+
+/* ---- BASE ---- */
+html,
+body {
+  background: var(--wk-surface);
+  color: var(--wk-text);
+  transition: background-color 0.25s ease, color 0.25s ease,
+    border-color 0.25s ease;
+  font-family: "Poppins", sans-serif;
+}
+a {
+  color: var(--wk-link);
+}
+a:hover {
+  opacity: 0.9;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--wk-text);
+}
+small,
+.text-muted {
+  color: var(--wk-text-secondary) !important;
+}
+
+/* utilitas teks */
+.text-accent {
+  color: var(--wk-accent) !important;
+}
+.text-default {
+  color: var(--wk-text) !important;
+}
+.text-secondary {
+  color: var(--wk-text-secondary) !important;
+}
+
+/* ---- CONTAINERS ---- */
+body,
+main {
+  background: var(--wk-surface);
+  color: var(--wk-text);
+}
+
+.card {
+  background: var(--wk-card);
+  color: var(--wk-text);
+  border: 1px solid var(--wk-border);
+  border-radius: var(--wk-radius);
+  box-shadow: var(--wk-shadow-1);
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.18s ease,
+    border-color 0.18s ease, background 0.18s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--wk-shadow-2);
+  border-color: rgba(250, 204, 21, 0.35);
+}
+.card .card-body {
+  padding: var(--wk-card-pad);
+  font-weight: 600;
+}
+.card .card-footer {
+  padding: 10px 14px;
+  border-top: 1px solid var(--wk-border);
+  color: var(--wk-text-secondary);
+  background: linear-gradient(180deg, rgba(250, 204, 21, 0.06), transparent);
+}
+
+/* aksen strip vertikal pada card contextual tanpa ubah HTML */
+.card.bg-primary,
+.card.bg-warning,
+.card.bg-success,
+.card.bg-danger {
+  background: var(--wk-card) !important;
+  color: var(--wk-text) !important;
+  position: relative;
+}
+.card.bg-primary::before,
+.card.bg-warning::before,
+.card.bg-success::before,
+.card.bg-danger::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 6px;
+  background: linear-gradient(180deg, var(--wk-accent), var(--wk-accent-600));
+}
+.card .small i {
+  color: var(--wk-accent-600);
+}
+
+/* ---- LINK & BUTTON ---- */
+a:hover {
+  color: var(--wk-accent-700);
+}
+.btn-primary,
+.btn-warning {
+  background: var(--wk-accent);
+  border-color: var(--wk-accent-600);
+  color: var(--wk-on-accent);
+}
+.btn-primary:hover,
+.btn-warning:hover {
+  background: var(--wk-accent-600);
+  border-color: var(--wk-accent-700);
+  color: var(--wk-on-accent);
+}
+
+/* outline agar kontras di dark */
+body.dark .btn-outline-secondary,
+.theme-dark .btn-outline-secondary {
+  color: var(--wk-text);
+  border-color: var(--wk-border);
+}
+body.dark .btn-outline-secondary:hover,
+.theme-dark .btn-outline-secondary:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ---- BREADCRUMB ---- */
+.breadcrumb {
+  background: transparent;
+}
+.breadcrumb .breadcrumb-item,
+.breadcrumb .breadcrumb-item.active {
+  color: var(--wk-text-secondary);
+}
+.breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+  color: var(--wk-text-secondary);
+}
+
+/* ---- DASHBOARD STATS ---- */
+.wk-stat.card {
+  padding: 0;
+  border-radius: var(--wk-radius);
+}
+.wk-stat__body {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 14px;
+  align-items: center;
+  padding: 16px;
+}
+.wk-stat__icon {
+  height: 56px;
+  width: 56px;
+  border-radius: 14px;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(
+      120px 80px at 20% -30%,
+      rgba(250, 204, 21, 0.25),
+      transparent 60%
+    ),
+    rgba(250, 204, 21, 0.12);
+  color: var(--wk-accent);
+  border: 1px solid rgba(250, 204, 21, 0.35);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transition: transform 0.18s ease;
+}
+.wk-stat.card:hover .wk-stat__icon {
+  transform: translateY(-2px);
+}
+.wk-stat__meta {
+  min-width: 0;
+}
+.wk-stat__label {
+  font-size: 0.85rem;
+  letter-spacing: 0.2px;
+}
+.wk-stat__value {
+  margin-top: 2px;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--wk-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wk-stat__sub {
+  font-size: 0.8rem;
+  margin-top: 2px;
+}
+.wk-stat__trend {
+  display: inline-grid;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  margin-top: 4px;
+  font-weight: 600;
+}
+.wk-stat__trend.up {
+  color: #16a34a;
+}
+.wk-stat__trend.down {
+  color: #ef4444;
+}
+.wk-stat__footer {
+  padding: 10px 16px;
+  border-top: 1px solid var(--wk-border);
+  background: linear-gradient(180deg, rgba(250, 204, 21, 0.05), transparent);
+}
+
+/* responsif kecil */
+@media (max-width: 575.98px) {
+  .card .card-body {
+    font-size: 0.95rem;
+  }
+  .card .card-footer {
+    font-size: 0.85rem;
+  }
+  .wk-stat__body {
+    grid-template-columns: 48px 1fr;
+    gap: 12px;
+  }
+  .wk-stat__icon {
+    height: 48px;
+    width: 48px;
+    border-radius: 12px;
+  }
+  .wk-stat__value {
+    font-size: 1.2rem;
+  }
+}
+
+/* ---- BRAND ASSETS ---- */
+.logo-brand-admin {
+  display: block;
+  max-height: 38px;
+}
+.brand-panel-label {
+  margin-top: -0.3rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.45em;
+  line-height: 1;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.35);
+}
+.logo-admin-show {
+  max-height: 30px;
+  border-radius: 50%;
+}
+
+/* ---- BOOTSTRAP OVERRIDES (DARK) ---- */
+body.dark .bg-white,
+.theme-dark .bg-white,
+body.dark .bg-light,
+.theme-dark .bg-light {
+  background-color: var(--wk-card) !important;
+  color: var(--wk-text) !important;
+}
+
+/* bg-dark benar2 gelap saat dark */
+body.dark .bg-dark,
+.theme-dark .bg-dark {
+  background-color: #000 !important;
+  color: var(--wk-text) !important;
+}
+
+/* text-dark di dark mode jangan hitam */
+body.dark .text-dark,
+.theme-dark .text-dark {
+  color: var(--wk-text) !important;
+}
+
+/* borders & tables */
+body.dark .border,
+.theme-dark .border,
+body.dark .table,
+.theme-dark .table,
+body.dark .table *,
+.theme-dark .table * {
+  border-color: var(--wk-border) !important;
+}
+
+/* tabel zebra tetap aman */
+body.dark .table-striped > tbody > tr:nth-of-type(odd) > *,
+.theme-dark .table-striped > tbody > tr:nth-of-type(odd) > * {
+  color: var(--wk-text);
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* ---- SIDENAV (SB Admin/custom) ---- */
+/* Light style default .sb-sidenav-dark (opsional) */
+.sb-sidenav-dark {
+  background: #fffbe6;
+}
+
+/* Apply gradient/solid sesuai variabel */
+.sb-sidenav .sb-sidenav-menu {
+  background: var(--wk-sbnav-bg-menu);
+  background: var(--wk-sbnav-bg-gradient-sidemenu, var(--wk-sbnav-bg-menu));
+  color: var(--wk-text-sidemenu);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+.sb-nav-fixed .sb-topnav {
+  background: var(--wk-sbnav-bg);
+  background: var(--wk-sbnav-bg-gradient, var(--wk-sbnav-bg));
+  color: var(--wk-text);
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* link/icon warna (mode light .sb-sidenav-dark) */
+.sb-sidenav-dark .sb-sidenav-menu .nav-link {
+  color: #111;
+  transition: 0.2s;
+}
+.sb-sidenav-dark .sb-sidenav-menu .nav-link .sb-nav-link-icon,
+.sb-sidenav-dark .sb-sidenav-menu .nav-link .sb-sidenav-collapse-arrow {
+  color: #111;
+  transition: 0.2s;
+}
+.sb-sidenav-dark .sb-sidenav-menu .nav-link:hover,
+.sb-sidenav-dark .sb-sidenav-menu .nav-link:hover .sb-nav-link-icon {
+  color: var(--wk-accent);
+}
+.sb-sidenav-dark .sb-sidenav-menu .nav-link.active,
+.sb-sidenav-dark .sb-sidenav-menu .nav-link.active .sb-nav-link-icon {
+  color: var(--wk-accent);
+}
+.sb-sidenav-dark .sb-sidenav-footer {
+  background-color: var(--wk-accent);
+}
+
+/* Icon sidebar: putih saat DARK, tapi biarkan aturan hover yang sudah ada bekerja */
+.sb-sidenav .sb-sidenav-menu .nav-link .sb-nav-link-icon {
+  transition: color 0.2s ease;
+}
+
+body.dark .sb-sidenav .sb-sidenav-menu .nav-link:not(:hover) .sb-nav-link-icon,
+.theme-dark
+  .sb-sidenav
+  .sb-sidenav-menu
+  .nav-link:not(:hover)
+  .sb-nav-link-icon {
+  color: var(--wk-text) !important; /* biasanya putih pada mode dark */
+}
+
+/* Dark enforcement untuk seluruh sidenav/topnav */
+body.dark .sb-sidenav-dark,
+.theme-dark .sb-sidenav-dark,
+body.dark .sb-sidenav,
+.theme-dark .sb-sidenav {
+  background-color: #000 !important;
+  color: var(--wk-text) !important;
+  border-right: 1px solid var(--wk-border) !important;
+}
+body.dark .sb-sidenav a,
+.theme-dark .sb-sidenav a {
+  color: var(--wk-text) !important;
+}
+body.dark .sb-sidenav a:hover,
+.theme-dark .sb-sidenav a:hover {
+  color: var(--wk-accent) !important;
+}
+
+/* ---- SMOOTH STATE CHANGES ---- */
+.card,
+.navbar,
+.dropdown-menu,
+.list-group-item,
+.table,
+.sb-sidenav {
+  transition: background-color 0.25s ease, color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* ---- ACCESSIBILITY ---- */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+/* === Sidebar toggle (burger) === */
+/* default (LIGHT) → hitam */
+#sidebarToggle i {
+  color: #000;
+}
+
+/* DARK override → putih (ikuti var tema) */
+body.dark #sidebarToggle i,
+.theme-dark #sidebarToggle i {
+  color: var(--wk-text);
+}
+
+/* optional hover feel */
+#sidebarToggle:hover i {
+  opacity: 0.85;
+}
+
+/* === Dropdown (avatar user) === */
+/* menu background & teks LIGHT → hitam */
+.sb-nav-fixed .sb-topnav .dropdown-menu {
+  background: var(--wk-card);
+  color: #000;
+  border-color: var(--wk-border);
+}
+.sb-nav-fixed .sb-topnav .dropdown-menu .dropdown-item {
+  color: #000;
+}
+.sb-nav-fixed .sb-topnav .dropdown-menu .dropdown-item:hover,
+.sb-nav-fixed .sb-topnav .dropdown-menu .dropdown-item:focus {
+  color: #000;
+  background: rgba(0, 0, 0, 0.06);
+}
+
+/* DARK override → putih */
+body.dark .sb-nav-fixed .sb-topnav .dropdown-menu,
+.theme-dark .sb-nav-fixed .sb-topnav .dropdown-menu {
+  background: var(--wk-card);
+  color: var(--wk-text);
+  border-color: var(--wk-border);
+}
+body.dark .sb-nav-fixed .sb-topnav .dropdown-menu .dropdown-item,
+.theme-dark .sb-nav-fixed .sb-topnav .dropdown-menu .dropdown-item {
+  color: var(--wk-text);
+}
+body.dark .sb-nav-fixed .sb-topnav .dropdown-menu .dropdown-item:hover,
+.theme-dark .sb-nav-fixed .sb-topnav .dropdown-menu .dropdown-item:hover {
+  color: var(--wk-text);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* === Caret/segitiga di link dropdown Bootstrap === */
+.sb-nav-fixed .sb-topnav .nav-link.dropdown-toggle::after {
+  border-top-color: #000; /* LIGHT → hitam */
+}
+body.dark .sb-nav-fixed .sb-topnav .nav-link.dropdown-toggle::after,
+.theme-dark .sb-nav-fixed .sb-topnav .nav-link.dropdown-toggle::after {
+  border-top-color: var(--wk-text); /* DARK → putih */
+}
+/* === Sidebar toggle icon: LIGHT → hitam, DARK → putih === */
+
+/* Pastikan ikon FA ikut warna teks elemen induk */
+#sidebarToggle .fa,
+#sidebarToggle .fas,
+#sidebarToggle i {
+  color: currentColor;
+}
+
+/* LIGHT (default) — paksa hitam, kalahkan .btn-link/.navbar rules */
+#sidebarToggle,
+.sb-nav-fixed .sb-topnav #sidebarToggle,
+.sb-nav-fixed .sb-topnav #sidebarToggle i,
+.sb-nav-fixed .sb-topnav #sidebarToggle .fas {
+  color: #000 !important;
+}
+
+/* DARK — balik ke putih (ikuti var tema) */
+body.dark #sidebarToggle,
+.theme-dark #sidebarToggle,
+body.dark .sb-nav-fixed .sb-topnav #sidebarToggle,
+.theme-dark .sb-nav-fixed .sb-topnav #sidebarToggle,
+body.dark .sb-nav-fixed .sb-topnav #sidebarToggle i,
+theme-dark .sb-nav-fixed .sb-topnav #sidebarToggle i,
+body.dark .sb-nav-fixed .sb-topnav #sidebarToggle .fas,
+.theme-dark .sb-nav-fixed .sb-topnav #sidebarToggle .fas {
+  color: var(--wk-text) !important; /* biasanya putih */
+}
+
+/* (opsional) hover feel */
+#sidebarToggle:hover {
+  opacity: 0.85;
+}
+body.dark #sidebarToggle:hover,
+.theme-dark #sidebarToggle:hover {
+  color: var(--wk-accent) !important;
+}
+/* Sidebar section heading: LIGHT → hitam, DARK → putih */
+.sb-sidenav .sb-sidenav-menu .sb-sidenav-menu-heading {
+  color: #000 !important; /* LIGHT */
+  font-weight: 700; /* opsional: biar tegas */
+  letter-spacing: 0.02em; /* opsional */
+  transition: color 0.2s ease;
+}
+
+body.dark .sb-sidenav .sb-sidenav-menu .sb-sidenav-menu-heading,
+.theme-dark .sb-sidenav .sb-sidenav-menu .sb-sidenav-menu-heading {
+  color: var(--wk-text) !important; /* DARK (biasanya putih) */
+}
+/* Floating Theme Toggle (FAB) */
+.theme-fab {
+  position: fixed;
+  right: max(16px, env(safe-area-inset-right));
+  bottom: max(16px, env(safe-area-inset-bottom));
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--wk-border);
+  border-radius: 999px;
+  background: var(--wk-card);
+  color: var(--wk-text);
+  box-shadow: var(--wk-shadow-1);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease,
+    background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  backdrop-filter: saturate(140%) blur(4px);
+}
+.theme-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--wk-shadow-2);
+}
+
+/* icon switching */
+.theme-fab .icon {
+  font-size: 18px;
+  line-height: 1;
+}
+.theme-fab .sun {
+  display: inline;
+}
+.theme-fab .moon {
+  display: none;
+}
+
+/* saat DARK, tampilkan icon matahari (untuk kembali ke Light) */
+body.dark .theme-fab .sun,
+.theme-dark .theme-fab .sun {
+  display: inline;
+}
+body.dark .theme-fab .moon,
+.theme-dark .theme-fab .moon {
+  display: none;
+}
+
+/* saat LIGHT, tampilkan icon bulan (untuk ke Dark) */
+:root .theme-fab .sun {
+  display: none;
+} /* override default */
+:root .theme-fab .moon {
+  display: inline;
+}
+
+/* ring aksen saat fokus keyboard */
+.theme-fab:focus-visible {
+  outline: 2px solid var(--wk-accent);
+  outline-offset: 2px;
+}
+
+/* opsi posisi alternatif (pojok kiri bawah): tambahkan class .left */
+.theme-fab.left {
+  left: max(16px, env(safe-area-inset-left));
+  right: auto;
+}
+
+@media (max-width: 575.98px) {
+  .theme-fab {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* view page main */
+/* ===== Layout content follows theme ===== */
+#layoutSidenav_content {
+  background: var(--wk-surface);
+  color: var(--wk-text);
+  min-height: 100vh; /* biar full tinggi */
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* pastikan elemen umum di dalamnya ikut warna tema */
+#layoutSidenav_content .container-fluid,
+#layoutSidenav_content main,
+#layoutSidenav_content section {
+  background: transparent; /* transparan, pakai bg parent */
+  color: var(--wk-text);
+}
+
+/* breadcrumb & teks kecil */
+#layoutSidenav_content .breadcrumb,
+#layoutSidenav_content .breadcrumb .breadcrumb-item,
+#layoutSidenav_content .breadcrumb .breadcrumb-item.active,
+#layoutSidenav_content .text-muted {
+  color: var(--wk-text-secondary) !important;
+}
+
+/* kartu di dalam content mengikuti theme card */
+#layoutSidenav_content .card,
+#layoutSidenav_content .list-group-item,
+#layoutSidenav_content .dropdown-menu {
+  background: var(--wk-card) !important;
+  color: var(--wk-text) !important;
+  border-color: var(--wk-border) !important;
+}
+
+/* table & border harmonisasi */
+#layoutSidenav_content .table,
+#layoutSidenav_content .table *,
+#layoutSidenav_content .border {
+  border-color: var(--wk-border) !important;
+}
+#layoutSidenav_content .table-striped > tbody > tr:nth-of-type(odd) > * {
+  background-color: rgba(255, 255, 255, 0.02);
+  color: var(--wk-text);
+}
+
+/* footer ikut tema (kalau footer ada di dalam #layoutSidenav_content) */
+#layoutSidenav_content footer {
+  background: var(--wk-card);
+  color: var(--wk-text);
+  border-top: 1px solid var(--wk-border);
+  transition: background-color 0.25s ease, color 0.25s ease,
+    border-color 0.25s ease;
+}
+body.dark .dashboard-cards .fs-2,
+body.dark .dashboard-cards .fs-4,
+body.dark .dashboard-cards .fs-6,
+.theme-dark .dashboard-cards .fs-2,
+.theme-dark .dashboard-cards .fs-4,
+.theme-dark .dashboard-cards .fs-6 {
+  color: #fff !important; /* atau var(--wk-text) */
+}
+/* ==== Themed shadow for dashboard stat cards ==== */
+/* LIGHT (default) */
+.dashboard-cards .card.dash-card {
+  /* pakai shadow custom, override shadow card umum */
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.3) !important;
+  transition: box-shadow 0.22s ease, transform 0.18s ease;
+}
+.dashboard-cards .card.dash-card:hover {
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3) !important;
+  transform: translateY(-2px);
+}
+
+/* DARK */
+body.dark .dashboard-cards .card.dash-card,
+.theme-dark .dashboard-cards .card.dash-card {
+  /* kuning 30% → gunakan var brand agar konsisten */
+  box-shadow: 0 10px 24px rgba(250, 204, 21, 0.3) !important; /* --wk-accent @ 30% */
+}
+body.dark .dashboard-cards .card.dash-card:hover,
+.theme-dark .dashboard-cards .card.dash-card:hover {
+  box-shadow: 0 16px 36px rgba(250, 204, 21, 0.3) !important;
+  transform: translateY(-2px);
+}
+/* ===== Modern Dropdown (works with Bootstrap) ===== */
+.wk-dropdown {
+  --dd-bg: var(--wk-card);
+  --dd-fg: var(--wk-text);
+  --dd-muted: var(--wk-text-secondary);
+  --dd-border: var(--wk-border);
+  --dd-shadow: var(--wk-shadow-2);
+
+  min-width: 220px;
+  padding: 8px;
+  border: 1px solid var(--dd-border);
+  border-radius: 14px;
+  background: var(--dd-bg);
+  color: var(--dd-fg);
+  box-shadow: var(--dd-shadow);
+  backdrop-filter: saturate(140%) blur(6px);
+}
+
+.wk-dropdown .dropdown-header {
+  padding: 6px 10px 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--dd-muted);
+}
+
+.wk-dropdown .dropdown-divider {
+  margin: 6px 8px;
+  border-top: 1px solid var(--dd-border);
+  opacity: 1;
+}
+
+.wk-dropdown .dropdown-item {
+  display: grid;
+  grid-template-columns: 22px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 10px;
+  border-radius: 10px;
+  color: var(--dd-fg);
+  transition: background-color 0.18s ease, color 0.18s ease,
+    transform 0.12s ease;
+}
+
+.wk-dropdown .dropdown-item .item-icon {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  color: var(--dd-muted);
+  transition: color 0.18s ease;
+}
+.wk-dropdown .dropdown-item .item-label {
+  line-height: 1.2;
+}
+.wk-dropdown .dropdown-item .item-meta.badge {
+  background: rgba(250, 204, 21, 0.15); /* kuning lembut */
+  color: var(--wk-accent);
+  border: 1px solid rgba(250, 204, 21, 0.35);
+  padding: 4px 8px;
+  font-size: 0.7rem;
+  border-radius: 999px;
+}
+
+.wk-dropdown .dropdown-item:hover,
+.wk-dropdown .dropdown-item:focus {
+  background: rgba(250, 204, 21, 0.1); /* aksen kuning halus */
+  color: var(--dd-fg);
+}
+.wk-dropdown .dropdown-item:hover .item-icon,
+.wk-dropdown .dropdown-item:focus .item-icon {
+  color: var(--wk-accent);
+}
+
+.wk-dropdown .dropdown-item.active,
+.wk-dropdown .dropdown-item:active {
+  background: rgba(250, 204, 21, 0.18);
+  color: var(--dd-fg);
+}
+
+/* Danger item */
+.wk-dropdown .dropdown-item.text-danger {
+  color: #ef4444;
+}
+.wk-dropdown .dropdown-item.text-danger .item-icon {
+  color: #ef4444;
+}
+.wk-dropdown .dropdown-item.text-danger:hover {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+/* Dark mode fine-tune (ikut body.dark/.theme-dark) */
+body.dark .wk-dropdown,
+.theme-dark .wk-dropdown {
+  /* variabel --wk-card/--wk-text sudah gelap; cukup tweak hover */
+}
+body.dark .wk-dropdown .dropdown-item:hover,
+.theme-dark .wk-dropdown .dropdown-item:hover {
+  background: rgba(250, 204, 21, 0.14);
+}

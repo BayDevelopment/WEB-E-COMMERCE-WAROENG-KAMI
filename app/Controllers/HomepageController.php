@@ -12,6 +12,7 @@ use App\Libraries\CartOwner;
 use App\Models\MejaModel;
 use App\Models\PesananItemModel;
 use App\Models\PesananModel;
+use CodeIgniter\I18n\Time;
 
 class HomepageController extends BaseController
 {
@@ -508,6 +509,7 @@ class HomepageController extends BaseController
             ];
         }
 
+        $nowJakarta = Time::now('Asia/Jakarta')->toDateTimeString();
         // Payload utama untuk header pesanan
         $payload = [
             'owner_key'      => $ownerKey,
@@ -516,8 +518,8 @@ class HomepageController extends BaseController
             'makan_ditempat' => $makanDitempat,
             'meja_id'        => $mejaIdInput ?: null,
             'total'          => $grandTotal,
-            'status'         => 'menunggu_bayar',
-            'created_at'     => date('Y-m-d H:i:s'),
+            'status'         => 'baru',
+            'created_at'     => $nowJakarta,
         ];
 
         try {
@@ -530,7 +532,7 @@ class HomepageController extends BaseController
             // Insert detail item
             foreach ($itemsBatch as &$it) {
                 $it['pesanan_id'] = $idPesanan;
-                $it['created_at'] = date('Y-m-d H:i:s');
+                $it['created_at'] = $nowJakarta;
             }
             $db->table('tb_pesanan_item')->insertBatch($itemsBatch);
 
@@ -552,7 +554,7 @@ class HomepageController extends BaseController
                 'total'       => $grandTotal,
                 'total_qty'   => $totalQty,
                 'item_count'  => count($itemsBatch),
-                'waktu'       => date('Y-m-d H:i:s'),
+                'waktu'       => $nowJakarta,
                 'expires_at'  => time() + $ttlSeconds,
                 'owner_key'   => $ownerKey,
             ];
