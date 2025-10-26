@@ -34,6 +34,11 @@ class Filters extends BaseFilters
         'forcehttps'    => ForceHTTPS::class,
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
+        'auth'          => \App\Filters\AuthFilter::class,
+        'role'          => \App\Filters\RoleFilter::class,
+        'guest'          => \App\Filters\GuestFilter::class,
+        'AdminOnly'          => \App\Filters\AdminGuestOnly::class,
+        'sessionTimeout'          => \App\Filters\SessionTimeout::class
     ];
 
     /**
@@ -70,7 +75,7 @@ class Filters extends BaseFilters
     public array $globals = [
         'before' => [
             // 'honeypot',
-            // 'csrf',
+            'csrf',
             // 'invalidchars',
         ],
         'after' => [
@@ -103,5 +108,38 @@ class Filters extends BaseFilters
      *
      * @var array<string, array<string, list<string>>>
      */
-    public array $filters = [];
+    public array $filters = [
+        // area admin: wajib login + timeout 18 jam
+        'auth' => [
+            'before' => ['admin/*'],
+        ],
+        'sessionTimeout' => [
+            'before' => ['admin/*'],
+        ],
+
+        // blokir halaman guest saat admin masih login
+        'AdminOnly' => [
+            'before' => [
+                // login page
+                'auth/login',
+                'auth/login/*',
+
+                // pelanggan (list + semua turunannya)
+                'pelanggan/produk',
+                'pelanggan/produk/*',
+
+                'pelanggan/keranjang',
+                'pelanggan/keranjang/*',
+
+                'pelanggan/success',
+                'pelanggan/success/*',
+
+                'pelanggan/riwayat',
+                'pelanggan/riwayat/*',
+
+                'tentang-kami',
+                'tentang-kami/*',
+            ],
+        ],
+    ];
 }

@@ -821,3 +821,591 @@ body.dark .wk-dropdown .dropdown-item:hover,
 .theme-dark .wk-dropdown .dropdown-item:hover {
   background: rgba(250, 204, 21, 0.14);
 }
+
+/* modal dark and light */
+/* Backdrop blur + sedikit gelap, responsif ke theme */
+.modal-backdrop.show {
+  opacity: 0.25; /* pakai opacity rendah, blur yang kerja */
+  backdrop-filter: blur(3px);
+}
+
+/* Konten modal modern */
+.modal-modern {
+  border: 1px solid var(--wk-modal-border);
+  border-radius: 1rem; /* 16px */
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+  overflow: hidden;
+  background: var(--wk-modal-bg);
+  color: var(--wk-modal-fg);
+}
+
+/* Header kecil bayangan bawah biar floating */
+.modal-modern .modal-header {
+  background: var(--wk-header-bg);
+  box-shadow: 0 1px 0 var(--wk-divider);
+}
+
+/* Footer transparan tipis */
+.modal-modern .modal-footer {
+  background: var(--wk-footer-bg);
+  box-shadow: 0 -1px 0 var(--wk-divider);
+}
+
+/* Input feel modern */
+.modal-modern .form-control {
+  background: var(--wk-input-bg);
+  color: var(--wk-input-fg);
+  border: 1px solid var(--wk-input-border);
+}
+.modal-modern .form-control:focus {
+  border-color: var(--wk-focus-ring);
+  box-shadow: 0 0 0 0.2rem
+    color-mix(in oklab, var(--wk-focus-ring) 25%, transparent);
+}
+.modal-modern .form-text {
+  color: var(--bs-secondary-color);
+}
+
+/* Badge kecil di header */
+.wk-badge {
+  background: var(--wk-badge-bg);
+  color: var(--wk-badge-fg);
+  font-weight: 600;
+  padding: 0.35rem 0.6rem;
+}
+
+/* Tombol tema-aware */
+.btn-theme {
+  --_bg: var(--wk-btn-bg);
+  --_fg: var(--wk-btn-fg);
+  --_bd: var(--wk-btn-bd);
+  background: var(--_bg);
+  color: var(--_fg);
+  border: 1px solid var(--_bd);
+  border-radius: 999px;
+  padding: 0.6rem 1.1rem;
+  font-weight: 600;
+  transition: 0.2s;
+}
+/* ==== WK Button Theme (light & dark sama) ==== */
+/* base */
+.btn-theme {
+  background: var(--wk-accent) !important; /* kuning brand */
+  border: 1px solid var(--wk-accent-600) !important;
+  color: #fff !important; /* teks putih */
+  border-radius: 999px;
+  font-weight: 600;
+  transition: background-color 0.2s ease, border-color 0.2s ease,
+    filter 0.2s ease;
+}
+
+/* hover / focus / active */
+.btn-theme:hover,
+.btn-theme:focus,
+.btn-theme:active,
+.btn-theme:active:focus {
+  background: var(--wk-accent-600) !important; /* sedikit lebih gelap */
+  border-color: var(--wk-accent-700) !important;
+  color: #fff !important; /* tetap putih */
+  filter: brightness(1);
+  box-shadow: 0 0 0 0.2rem
+    color-mix(in oklab, var(--wk-accent) 28%, transparent);
+}
+
+/* disabled tetap kontras */
+.btn-theme:disabled,
+.btn-theme.disabled {
+  background: var(--wk-accent) !important;
+  border-color: var(--wk-accent-600) !important;
+  color: #fff !important;
+  opacity: 0.7;
+}
+
+/* optional: versi kecil juga ikut */
+.btn.btn-sm.btn-theme {
+  padding: 0.35rem 0.8rem;
+}
+
+.btn-theme:disabled {
+  opacity: 0.75;
+}
+
+.btn-outline-theme {
+  --_fg: var(--wk-btn-outline-fg);
+  --_bd: var(--wk-btn-outline-bd);
+  color: var(--_fg);
+  border: 1px solid var(--_bd);
+  background: transparent;
+  border-radius: 999px;
+  padding: 0.6rem 1.1rem;
+  font-weight: 600;
+}
+.btn-outline-theme:hover {
+  background: color-mix(in oklab, var(--_fg) 12%, transparent);
+}
+
+/* Close button warna otomatis */
+.btn-close-theme {
+  filter: var(--wk-close-filter);
+}
+
+/* ====== LIGHT THEME VARS ====== */
+:root,
+[data-bs-theme="light"] {
+  --wk-modal-bg: #fff;
+  --wk-modal-fg: #111827;
+  --wk-modal-border: rgba(0, 0, 0, 0.06);
+  --wk-header-bg: rgba(255, 255, 255, 0.75);
+  --wk-footer-bg: rgba(255, 255, 255, 0.75);
+  --wk-divider: rgba(17, 24, 39, 0.06);
+
+  --wk-input-bg: #fff;
+  --wk-input-fg: #111827;
+  --wk-input-border: rgba(17, 24, 39, 0.15);
+
+  --wk-focus-ring: #3b82f6; /* primary-ish */
+
+  --wk-badge-bg: #f3f4f6;
+  --wk-badge-fg: #111827;
+
+  --wk-btn-bg: #111827; /* dark slate */
+  --wk-btn-fg: #ffffff;
+  --wk-btn-bd: #111827;
+
+  --wk-btn-outline-fg: #111827;
+  --wk-btn-outline-bd: rgba(17, 24, 39, 0.25);
+
+  --wk-close-filter: none; /* ikon close gelap */
+}
+
+/* ====== DARK THEME VARS ====== */
+[data-bs-theme="dark"] {
+  --wk-modal-bg: #0b1220; /* deep navy */
+  --wk-modal-fg: #e5e7eb;
+  --wk-modal-border: rgba(255, 255, 255, 0.08);
+  --wk-header-bg: rgba(11, 18, 32, 0.65);
+  --wk-footer-bg: rgba(11, 18, 32, 0.65);
+  --wk-divider: rgba(229, 231, 235, 0.06);
+
+  --wk-input-bg: #0e172a;
+  --wk-input-fg: #e5e7eb;
+  --wk-input-border: rgba(229, 231, 235, 0.14);
+
+  --wk-focus-ring: #60a5fa;
+
+  --wk-badge-bg: #111827;
+  --wk-badge-fg: #e5e7eb;
+
+  --wk-btn-bg: #2563eb; /* biru biar kontras di dark */
+  --wk-btn-fg: #ffffff;
+  --wk-btn-bd: #1d4ed8;
+
+  --wk-btn-outline-fg: #e5e7eb;
+  --wk-btn-outline-bd: rgba(229, 231, 235, 0.28);
+
+  --wk-close-filter: invert(1); /* ikon close jadi terang */
+}
+
+/* Aksesibilitas: kurangi animasi kalau user pilih reduce motion */
+@media (prefers-reduced-motion: reduce) {
+  .modal-backdrop.show {
+    backdrop-filter: none;
+  }
+  .modal,
+  .modal * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* responsive empty image */
+/* Wrapper kosong: center secara fleksibel */
+.cover-img-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  min-height: 40vh; /* biar gak keliatan “kopong” */
+  padding: 1.25rem;
+  gap: 0.5rem;
+}
+
+/* Gambar responsif */
+.size-img-empty {
+  max-width: 320px; /* batas wajar di desktop */
+  width: 90%; /* skala ikut lebar container */
+  height: auto; /* jaga rasio */
+  object-fit: contain; /* aman untuk berbagai rasio */
+  display: block;
+  margin: 0 auto;
+}
+
+/* Typografi judul */
+.cover-img-empty h6 {
+  margin-top: 0.5rem;
+  font-weight: 600;
+  color: #6b7280; /* gray-500 */
+}
+
+/* ——— Breakpoints ——— */
+
+/* HP kecil */
+@media (max-width: 576px) {
+  .cover-img-empty {
+    min-height: 30vh;
+    padding: 1rem;
+  }
+  .size-img-empty {
+    max-width: 220px;
+    width: 80%;
+  }
+  .cover-img-empty h6 {
+    font-size: 0.95rem;
+  }
+}
+
+/* Tablet */
+@media (min-width: 577px) and (max-width: 991px) {
+  .size-img-empty {
+    max-width: 280px;
+  }
+}
+
+/* Desktop besar */
+@media (min-width: 1200px) {
+  .size-img-empty {
+    max-width: 360px;
+  }
+}
+
+/* Optional: dukung dark mode (kalau ada) */
+@media (prefers-color-scheme: dark) {
+  .cover-img-empty h6 {
+    color: #9ca3af; /* gray-400 */
+  }
+}
+.size-img-empty {
+  transition: transform 0.25s ease;
+}
+.size-img-empty:hover {
+  transform: scale(1.02);
+}
+/* --- Avatar Uploader --- */
+.wk-avatar-img {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border-radius: 9999px;
+  border: 2px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+.wk-upload-box {
+  min-height: 72px;
+  border: 1.5px dashed rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.02);
+  transition: border-color 0.2s, background 0.2s;
+}
+.wk-upload-box.wk-dragover {
+  border-color: #0d6efd;
+  background: rgba(13, 110, 253, 0.06);
+}
+.wk-upload-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.wk-file-name {
+  max-width: 260px;
+}
+
+/* Dark mode (prefers + .dark class fallback) */
+@media (prefers-color-scheme: dark) {
+  .wk-avatar-img {
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  }
+  .wk-upload-box {
+    border-color: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.04);
+  }
+  .wk-upload-box.wk-dragover {
+    background: rgba(13, 110, 253, 0.2);
+  }
+  .wk-upload-hint {
+    color: rgba(255, 255, 255, 0.65);
+  }
+}
+.dark .wk-avatar-img {
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+.dark .wk-upload-box {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
+}
+.dark .wk-upload-box.wk-dragover {
+  background: rgba(13, 110, 253, 0.2);
+}
+.dark .wk-upload-hint {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* ======================================================
+   OVERRIDES: DARK INPUT — dark-muda + garis putih halus
+   (tempatkan DI BAWAH untuk memastikan menang override)
+   ====================================================== */
+
+/* Vars tambahan khusus dark */
+body.dark,
+.theme-dark,
+[data-bs-theme="dark"] {
+  --wk-input-bg: #0f1520; /* dark muda */
+  --wk-input-fg: #e5e7eb; /* teks terang */
+  --wk-input-border: rgba(255, 255, 255, 0.16);
+  --wk-input-stripe: rgba(255, 255, 255, 0.06); /* garis putih halus */
+  --wk-input-stripe-gap: 12px; /* jarak antar garis */
+  --wk-input-stripe-thick: 1px; /* tebal garis */
+  --wk-focus-ring: #60a5fa;
+}
+
+/* INPUT & TEXTAREA (form-floating otomatis ikut) */
+body.dark .form-floating > .form-control,
+.theme-dark .form-floating > .form-control,
+[data-bs-theme="dark"] .form-floating > .form-control,
+body.dark .form-control,
+.theme-dark .form-control,
+[data-bs-theme="dark"] .form-control {
+  color: var(--wk-input-fg);
+  border: 1px solid var(--wk-input-border);
+  background: repeating-linear-gradient(
+      135deg,
+      var(--wk-input-stripe) 0,
+      var(--wk-input-stripe) var(--wk-input-stripe-thick),
+      transparent var(--wk-input-stripe-thick),
+      transparent var(--wk-input-stripe-gap)
+    ),
+    var(--wk-input-bg);
+}
+
+/* SELECT (jaga caret + stripes) */
+body.dark .form-floating > .form-select,
+.theme-dark .form-floating > .form-select,
+[data-bs-theme="dark"] .form-floating > .form-select,
+body.dark .form-select,
+.theme-dark .form-select,
+[data-bs-theme="dark"] .form-select {
+  color: var(--wk-input-fg);
+  border: 1px solid var(--wk-input-border);
+  background-image:
+    /* stripes layer */ repeating-linear-gradient(
+      135deg,
+      var(--wk-input-stripe) 0,
+      var(--wk-input-stripe) var(--wk-input-stripe-thick),
+      transparent var(--wk-input-stripe-thick),
+      transparent var(--wk-input-stripe-gap)
+    ),
+    /* caret layers */
+      linear-gradient(45deg, transparent 50%, var(--wk-input-fg) 50%),
+    linear-gradient(135deg, var(--wk-input-fg) 50%, transparent 50%),
+    /* base color */ linear-gradient(var(--wk-input-bg), var(--wk-input-bg));
+  background-position: 0 0, /* stripes cover */ calc(100% - 20px) calc(1.1em),
+    /* caret 1 */ calc(100% - 15px) calc(1.1em), /* caret 2 */ 0 0; /* base */
+  background-size: auto, 5px 5px, 5px 5px, 100% 100%;
+  background-repeat: no-repeat;
+}
+
+/* Placeholder & label kontras */
+body.dark .form-floating > label,
+.theme-dark .form-floating > label,
+[data-bs-theme="dark"] .form-floating > label {
+  color: #b6bfca; /* muted terang */
+}
+body.dark .form-floating > .form-control::placeholder,
+.theme-dark .form-floating > .form-control::placeholder,
+[data-bs-theme="dark"] .form-floating > .form-control::placeholder {
+  color: #9aa3af;
+}
+
+/* Focus ring */
+body.dark .form-floating > .form-control:focus,
+.theme-dark .form-floating > .form-control:focus,
+[data-bs-theme="dark"] .form-floating > .form-control:focus,
+body.dark .form-floating > .form-select:focus,
+.theme-dark .form-floating > .form-select:focus,
+[data-bs-theme="dark"] .form-floating > .form-select:focus {
+  border-color: var(--wk-focus-ring);
+  box-shadow: 0 0 0 0.2rem
+    color-mix(in oklab, var(--wk-focus-ring) 35%, transparent);
+}
+
+/* Disabled/readonly */
+body.dark .form-control:disabled,
+.theme-dark .form-control:disabled,
+[data-bs-theme="dark"] .form-control:disabled,
+body.dark .form-control[readonly],
+.theme-dark .form-control[readonly],
+[data-bs-theme="dark"] .form-control[readonly],
+body.dark .form-select:disabled,
+.theme-dark .form-select:disabled,
+[data-bs-theme="dark"] .form-select:disabled {
+  background: repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.05) 0,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px,
+      transparent 12px
+    ),
+    color-mix(in oklab, var(--wk-input-bg) 88%, #000 12%);
+  color: #aab4c0;
+  border-color: var(--wk-input-border);
+}
+
+/* Password eye button */
+body.dark #btnTogglePass,
+.theme-dark #btnTogglePass,
+[data-bs-theme="dark"] #btnTogglePass {
+  border-color: var(--wk-input-border);
+  background: repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.05) 0,
+      rgba(255, 255, 255, 0.05) 1px,
+      transparent 1px,
+      transparent 12px
+    ),
+    color-mix(in oklab, var(--wk-card) 90%, #000 10%);
+  color: var(--wk-input-fg);
+}
+body.dark #btnTogglePass:hover,
+.theme-dark #btnTogglePass:hover,
+[data-bs-theme="dark"] #btnTogglePass:hover {
+  border-color: var(--wk-focus-ring);
+  background: repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.07) 0,
+      rgba(255, 255, 255, 0.07) 1px,
+      transparent 1px,
+      transparent 12px
+    ),
+    color-mix(in oklab, var(--wk-input-bg) 88%, var(--wk-focus-ring) 12%);
+}
+
+/* Avatar uploader box ikut dark + stripes */
+body.dark .wk-upload-box,
+.theme-dark .wk-upload-box,
+[data-bs-theme="dark"] .wk-upload-box {
+  border-color: var(--wk-input-border);
+  background: repeating-linear-gradient(
+      135deg,
+      var(--wk-input-stripe) 0,
+      var(--wk-input-stripe) var(--wk-input-stripe-thick),
+      transparent var(--wk-input-stripe-thick),
+      transparent var(--wk-input-stripe-gap)
+    ),
+    color-mix(in oklab, var(--wk-input-bg) 92%, transparent);
+}
+body.dark .wk-upload-box.wk-dragover,
+.theme-dark .wk-upload-box.wk-dragover,
+[data-bs-theme="dark"] .wk-upload-box.wk-dragover {
+  background: repeating-linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.08) 0,
+      rgba(255, 255, 255, 0.08) 1px,
+      transparent 1px,
+      transparent 12px
+    ),
+    color-mix(in oklab, var(--wk-input-bg) 85%, var(--wk-focus-ring) 15%);
+}
+
+/* File name & hint warna di dark */
+body.dark .wk-file-name,
+.theme-dark .wk-file-name,
+[data-bs-theme="dark"] .wk-file-name {
+  color: #b9c3cf;
+}
+body.dark .wk-upload-hint,
+.theme-dark .wk-upload-hint,
+[data-bs-theme="dark"] .wk-upload-hint {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Autofill chrome di dark */
+body.dark input:-webkit-autofill,
+.theme-dark input:-webkit-autofill,
+[data-bs-theme="dark"] input:-webkit-autofill {
+  -webkit-text-fill-color: var(--wk-input-fg);
+  -webkit-box-shadow: 0 0 0px 1000px var(--wk-input-bg) inset;
+}
+/* Untuk input/select yang sedang "dibekukan" (readonly di JS) */
+.disabled-select,
+input[readonly],
+textarea[readonly] {
+  background-color: var(--wk-bg-disabled);
+  color: var(--wk-text-disabled);
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Khusus select, hilangkan pointer event supaya tidak bisa diklik */
+.disabled-select {
+  pointer-events: none;
+}
+
+/* Definisikan warna adaptif */
+:root {
+  /* Light mode */
+  --wk-bg-disabled: #e9ecef;
+  --wk-text-disabled: #6c757d;
+}
+
+/* Dark mode (otomatis aktif bila preferensi OS dark) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --wk-bg-disabled: #2b2b2b; /* abu tua untuk dark mode */
+    --wk-text-disabled: #aaaaaa; /* abu terang agar kontras */
+  }
+}
+
+/* Jika kamu pakai sistem toggle dark mode manual (class .dark-mode di <body>): */
+body.dark-mode {
+  --wk-bg-disabled: #2b2b2b;
+  --wk-text-disabled: #aaaaaa;
+}
+/* Untuk input/select yang sedang "dibekukan" (readonly di JS) */
+.disabled-select,
+input[readonly],
+textarea[readonly] {
+  background-color: var(--wk-bg-disabled);
+  color: var(--wk-text-disabled);
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+/* Khusus select, hilangkan pointer event supaya tidak bisa diklik */
+.disabled-select {
+  pointer-events: none;
+}
+
+/* Definisikan warna adaptif */
+:root {
+  /* Light mode */
+  --wk-bg-disabled: #e9ecef;
+  --wk-text-disabled: #6c757d;
+}
+
+/* Dark mode (otomatis aktif bila preferensi OS dark) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --wk-bg-disabled: #2b2b2b; /* abu tua untuk dark mode */
+    --wk-text-disabled: #aaaaaa; /* abu terang agar kontras */
+  }
+}
+
+/* Jika kamu pakai sistem toggle dark mode manual (class .dark-mode di <body>): */
+body.dark-mode {
+  --wk-bg-disabled: #2b2b2b;
+  --wk-text-disabled: #aaaaaa;
+}
