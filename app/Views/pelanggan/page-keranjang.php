@@ -233,6 +233,14 @@
                             </select>
                             <div class="form-text text-muted">Hanya menampilkan meja yang belum digunakan.</div>
                         </div>
+                        <div class="mb-2">
+                            <label class="form-label mb-0">Metode Pembayaran</label>
+                            <select id="fPembayaran" name="pembayaran" class="form-select" required>
+                                <option value="">Pilih Metode...</option>
+                                <option value="cash">Cash / Tunai</option>
+                                <option value="qris">QRIS / Scan</option>
+                            </select>
+                        </div>
 
                     </div>
 

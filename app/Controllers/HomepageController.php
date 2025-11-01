@@ -459,18 +459,22 @@ class HomepageController extends BaseController
     public function pesan_sekarang()
     {
         Services::session();
-        helper('ordercode'); // pastikan helper aktif
+        helper('ordercode');
         $db       = db_connect();
         $ownerKey = \App\Libraries\CartOwner::key();
 
         $nama   = trim((string)$this->request->getPost('username'));
         $alamat = trim((string)$this->request->getPost('alamat'));
+        $metodePembayaran = trim((string)$this->request->getPost('pembayaran'));
 
         if ($nama === '' || $alamat === '') {
             return redirect()->back()->with('error', 'Lengkapi data pemesan terlebih dahulu.');
         }
 
-        // Input sederhana
+        if ($metodePembayaran === '') {
+            return redirect()->back()->with('error', 'Pilih metode pembayaran terlebih dahulu.');
+        }
+
         $makanDitempat = (int)($this->request->getPost('makan_ditempat') ?? 0);
         $mejaIdInput   = (int)($this->request->getPost('meja_id') ?? 0);
 
@@ -487,7 +491,6 @@ class HomepageController extends BaseController
                 ->with('error', 'Keranjang kosong, tidak ada item untuk diproses.');
         }
 
-        // Hitung total dan siapkan batch item
         $grandTotal = 0.0;
         $totalQty   = 0;
         $itemsBatch = [];
@@ -510,33 +513,30 @@ class HomepageController extends BaseController
         }
 
         $nowJakarta = Time::now('Asia/Jakarta')->toDateTimeString();
-        // Payload utama untuk header pesanan
+
+        // Payload utama
         $payload = [
-            'owner_key'      => $ownerKey,
-            'nama_pelanggan' => $nama,
-            'alamat'         => $alamat,
-            'makan_ditempat' => $makanDitempat,
-            'meja_id'        => $mejaIdInput ?: null,
-            'total'          => $grandTotal,
-            'status'         => 'baru',
-            'created_at'     => $nowJakarta,
+            'owner_key'        => $ownerKey,
+            'nama_pelanggan'   => $nama,
+            'alamat'           => $alamat,
+            'makan_ditempat'   => $makanDitempat,
+            'meja_id'          => $mejaIdInput ?: null,
+            'total'            => $grandTotal,
+            'status'           => 'baru',
+            'pembayaran' => $metodePembayaran,
+            'created_at'       => $nowJakarta,
         ];
 
         try {
-            // Dapatkan kode pesanan dan ID otomatis via helper ordercode
             [$kode, $idPesanan] = claim_next_kode_from_pesanan($db, $payload, 'KP', 4);
 
-            // Mulai transaksi
             $db->transStart();
 
-            // Insert detail item
             foreach ($itemsBatch as &$it) {
                 $it['pesanan_id'] = $idPesanan;
                 $it['created_at'] = $nowJakarta;
             }
             $db->table('tb_pesanan_item')->insertBatch($itemsBatch);
-
-            // Kosongkan keranjang milik owner_key ini
             $db->table('tb_keranjang')->where('owner_key', $ownerKey)->delete();
 
             $db->transComplete();
@@ -545,9 +545,7 @@ class HomepageController extends BaseController
                 throw new \RuntimeException('Transaksi gagal disimpan.');
             }
 
-            // ===== Tempdata untuk page sukses & riwayat =====
-            $ttlSeconds = 1800; // 30 menit
-
+            $ttlSeconds = 1800;
             $success = [
                 'id'          => $idPesanan,
                 'kode'        => $kode,
@@ -557,6 +555,8 @@ class HomepageController extends BaseController
                 'waktu'       => $nowJakarta,
                 'expires_at'  => time() + $ttlSeconds,
                 'owner_key'   => $ownerKey,
+                'status'      => 'baru',
+                'metode'      => $metodePembayaran,
             ];
 
             session()->setTempdata('order_success', $success, $ttlSeconds);
@@ -565,7 +565,6 @@ class HomepageController extends BaseController
                 'expires_at' => time() + $ttlSeconds,
             ], $ttlSeconds);
 
-            // ===== Langsung tampilkan halaman sukses =====
             return view('pelanggan/page-sukses', [
                 'title'          => 'Pesanan Berhasil | Waroeng Kami',
                 'nav_link'       => 'pesanan',
@@ -582,6 +581,7 @@ class HomepageController extends BaseController
                 ->with('error', 'Gagal membuat pesanan: ' . $e->getMessage());
         }
     }
+
 
     public function RiwayatTemp()
     {
