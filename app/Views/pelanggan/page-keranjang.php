@@ -245,7 +245,7 @@
                             <div class="list-group-item">
                                 <div class="d-flex align-items-center justify-content-between gap-3">
                                     <div class="d-flex align-items-center gap-3">
-                                        <img src="<?= !empty($it['gambar']) ? base_url('assets/img/' . $it['gambar']) : base_url('assets/img/box.png') ?>"
+                                        <img src="<?= !empty($it['gambar']) ? base_url('assets/uploads/produk/' . $it['gambar']) : base_url('assets/img/box.png') ?>"
                                             alt="<?= esc($it['nama_produk']) ?>"
                                             style="width:64px;height:64px;object-fit:cover;border-radius:10px;">
                                         <div>

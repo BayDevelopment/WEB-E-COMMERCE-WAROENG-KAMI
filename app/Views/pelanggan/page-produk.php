@@ -141,7 +141,7 @@
                             <img
                                 class="product-thumb"
                                 src="<?= !empty($p['gambar'])
-                                            ? base_url('assets/img/' . esc($p['gambar']))
+                                            ? base_url('assets/uploads/produk/' . esc($p['gambar']))
                                             : base_url('assets/img/box.png') ?>"
                                 alt="<?= esc($p['nama_produk']) ?>">
 

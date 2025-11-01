@@ -803,63 +803,6 @@
                 }
             });
         };
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('chartOmzetTahunan').getContext('2d');
-
-            const labels = <?= json_encode($profitLabels) ?>;
-            const dataValues = <?= json_encode($profitData) ?>;
-
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Omzet Tahunan (Rp)',
-                        data: dataValues,
-                        backgroundColor: 'rgba(75, 192, 192, 0.7)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top'
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': Rp ' + context.parsed.y.toLocaleString();
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: value => 'Rp ' + value.toLocaleString()
-                            }
-                        },
-                        x: {
-                            ticks: {
-                                autoSkip: false,
-                                maxRotation: 45,
-                                minRotation: 0
-                            }
-                        }
-                    }
-                }
-            });
-
-            // Tinggi tetap
-            const canvasParent = document.getElementById('chartOmzetTahunan').parentNode;
-            canvasParent.style.height = '350px';
-        });
     </script>
 </body>
 

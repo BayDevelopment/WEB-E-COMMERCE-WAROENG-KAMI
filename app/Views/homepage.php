@@ -515,7 +515,7 @@
         <div class="wk-list">
             <?php foreach (($products ?? []) as $p): ?>
                 <div class="wk-card">
-                    <img class="wk-img" src="<?= base_url('assets/img/' . esc($p['gambar'] ?? base_url('assets/img/placeholder.jpg'))) ?>"
+                    <img class="wk-img" src="<?= base_url('assets/uploads/produk/' . esc($p['gambar'] ?? base_url('assets/img/placeholder.jpg'))) ?>"
                         alt="<?= esc($p['nama']) ?>">
                     <div class="wk-info">
                         <div class="wk-name"><?= esc($p['nama']) ?></div>
