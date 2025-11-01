@@ -1409,3 +1409,1117 @@ body.dark-mode {
   --wk-bg-disabled: #2b2b2b;
   --wk-text-disabled: #aaaaaa;
 }
+/* 🎨 Default (mode terang) */
+.form-select {
+  background-color: #fff;
+  color: #212529;
+  border-color: #ced4da;
+}
+
+/* 🌙 Mode dark support */
+body.dark .form-select,
+html.theme-dark .form-select,
+[data-theme="dark"] .form-select {
+  background-color: #1e1e1e !important;
+  color: #f1f1f1 !important;
+  border-color: #444 !important;
+}
+
+/* Hover & focus effect biar tetap halus */
+body.dark .form-select:focus,
+html.theme-dark .form-select:focus,
+[data-theme="dark"] .form-select:focus {
+  background-color: #222 !important;
+  border-color: #666 !important;
+  color: #fff !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.1);
+}
+
+/* Opsi dropdown (browser-dependent, tapi ini bantu di Chrome/Edge) */
+body.dark option,
+html.theme-dark option,
+[data-theme="dark"] option {
+  background-color: #1e1e1e;
+  color: #f1f1f1;
+}
+body.dark .form-floating label,
+html.theme-dark .form-floating label,
+[data-theme="dark"] .form-floating label {
+  color: #bbb;
+}
+
+body.dark .form-floating label::after,
+html.theme-dark .form-floating label::after,
+[data-theme="dark"] .form-floating label::after {
+  background-color: #1e1e1e;
+}
+/* === STYLE DASAR === */
+.sb-sidenav-menu-nested .nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: #212529; /* teks hitam untuk mode light */
+  transition: all 0.25s ease-in-out;
+}
+
+/* Hover (Light Mode) */
+.sb-sidenav-menu-nested .nav-link:hover {
+  background-color: #ffc107; /* bg kuning */
+  color: #fff !important; /* teks putih */
+}
+
+/* Active (Light Mode) */
+.sb-sidenav-menu-nested .nav-link.active {
+  background-color: #ffc107; /* bg kuning */
+  color: #fff !important; /* teks putih */
+  font-weight: 600;
+}
+
+/* Hover saat Active (Light Mode) */
+.sb-sidenav-menu-nested .nav-link.active:hover {
+  background-color: #ffc107;
+  color: #fff !important;
+}
+
+/* === DARK MODE === */
+@media (prefers-color-scheme: dark) {
+  /* Default dark mode */
+  .sb-sidenav-menu-nested .nav-link {
+    color: #fff !important; /* teks putih */
+    background-color: transparent;
+  }
+
+  /* Hover (Dark Mode) — hanya ubah background, teks tetap putih */
+  .sb-sidenav-menu-nested .nav-link:hover {
+    background-color: rgba(255, 193, 7, 0.25) !important; /* kuning lembut */
+    color: #fff !important; /* teks tetap putih */
+  }
+
+  /* Active (Dark Mode) — bg kuning solid, teks putih */
+  .sb-sidenav-menu-nested .nav-link.active {
+    background-color: #ffc107 !important; /* bg kuning solid */
+    color: #fff !important; /* teks putih */
+    font-weight: 600;
+  }
+
+  /* Hover saat Active (Dark Mode) — tetap kuning solid */
+  .sb-sidenav-menu-nested .nav-link.active:hover {
+    background-color: #ffc107 !important;
+    color: #fff !important;
+  }
+}
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #121212;
+    color: #ffffff;
+  }
+
+  .dropdown-menu {
+    background-color: #1e1e1e;
+    color: #ffffff;
+  }
+
+  .form-select,
+  .form-control {
+    background-color: #2a2a2a;
+    color: #f0f0f0;
+    border-color: #444;
+  }
+}
+/* === FORM THEME SYNC: Light & Dark === */
+
+/* 🌞 Mode Light (default) */
+body:not(.dark) .form-control,
+body:not(.dark) .form-select,
+body:not(.dark) textarea {
+  background-color: #fff;
+  color: #212529;
+  border-color: #ced4da;
+}
+
+body:not(.dark) .form-control:focus,
+body:not(.dark) .form-select:focus,
+body:not(.dark) textarea:focus {
+  background-color: #fff;
+  color: #212529;
+  border-color: var(--bs-primary);
+  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25);
+}
+
+/* 🌙 Mode Dark */
+body.dark .form-control,
+body.dark .form-select,
+body.dark textarea {
+  background-color: #2b2b2b !important;
+  color: #f8f9fa !important;
+  border-color: #444 !important;
+}
+
+body.dark .form-control:focus,
+body.dark .form-select:focus,
+body.dark textarea:focus {
+  background-color: #333 !important;
+  color: #fff !important;
+  border-color: var(--bs-primary) !important;
+  box-shadow: 0 0 0 0.2rem rgba(var(--bs-primary-rgb), 0.25) !important;
+}
+
+/* Label & teks bantu */
+body.dark label,
+body.dark .form-label,
+body.dark .form-check-label,
+body.dark .form-floating label {
+  color: #e9ecef !important;
+}
+
+/* Upload area */
+body.dark #uploadArea {
+  background-color: #2b2b2b !important;
+  border-color: #555 !important;
+}
+
+body.dark #previewArea p,
+body.dark #previewArea small {
+  color: #bbb !important;
+}
+
+/* Error message */
+body.dark .invalid-feedback {
+  color: #ff7675 !important;
+}
+
+/* === DROPDOWN (SELECT OPTION) === */
+
+/* Warna opsi di dalam select */
+body.dark select option {
+  background-color: #2b2b2b;
+  color: #f8f9fa;
+}
+
+/* Hover & selected state di dropdown */
+body.dark select option:hover,
+body.dark select option:focus,
+body.dark select option:checked {
+  background-color: #444;
+  color: #fff;
+}
+
+/* Untuk browser dengan native dropdown (Chrome, Edge, Firefox) */
+body.dark select.form-select {
+  background-color: #2b2b2b !important;
+  color: #f8f9fa !important;
+  border-color: #555 !important;
+}
+
+/* Dropdown arrow warna terang di dark mode */
+body.dark select.form-select:focus {
+  background-image: var(--bs-form-select-bg-img),
+    linear-gradient(to bottom, #fff 0%, #fff 100%) !important;
+}
+
+/* Checkbox dan radio */
+body.dark .form-check-input {
+  background-color: #444;
+  border-color: #666;
+}
+body.dark .form-check-input:checked {
+  background-color: var(--bs-primary);
+  border-color: var(--bs-primary);
+}
+
+/* Transisi halus antar tema */
+body,
+.form-control,
+.form-select,
+textarea,
+label,
+#uploadArea {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
+}
+/* === 🌞 LIGHT MODE === */
+body:not(.dark) .sb-sidenav-menu .nav-link {
+  color: #212529 !important; /* teks hitam */
+  background: transparent !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Hover */
+body:not(.dark) .sb-sidenav-menu .nav-link:hover {
+  background-color: var(--bs-warning) !important;
+  color: #000 !important;
+  font-weight: 600;
+  border-radius: 0.375rem;
+}
+
+/* Hover icon ikut hitam */
+body:not(.dark) .sb-sidenav-menu .nav-link:hover i {
+  color: #000 !important;
+}
+
+/* Active */
+body:not(.dark) .sb-sidenav-menu .nav-link.active {
+  background-color: var(--bs-warning) !important;
+  color: #000 !important;
+  font-weight: 600;
+  border-radius: 0.375rem;
+}
+body:not(.dark) .sb-sidenav-menu .nav-link.active i {
+  color: #000 !important;
+}
+
+/* Default icon + collapse arrow warna hitam */
+body:not(.dark) .sb-sidenav-menu .nav-link i,
+body:not(.dark) .sb-sidenav-collapse-arrow i {
+  color: #212529 !important;
+  transition: color 0.25s ease;
+}
+
+/* === 🌙 DARK MODE === */
+body.dark .sb-sidenav-menu .nav-link {
+  color: #e9ecef !important; /* teks abu terang */
+  background: transparent !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Hover & Active → bg kuning, teks hitam */
+body.dark .sb-sidenav-menu .nav-link:hover,
+body.dark .sb-sidenav-menu .nav-link.active {
+  background-color: #ffca2c !important;
+  color: #000 !important;
+  font-weight: 600;
+  border-radius: 0.375rem;
+}
+body.dark .sb-sidenav-menu .nav-link:hover i,
+body.dark .sb-sidenav-menu .nav-link.active i {
+  color: #000 !important;
+}
+
+/* Icon dan arrow default warna abu terang */
+body.dark .sb-sidenav-menu .nav-link i,
+body.dark .sb-sidenav-collapse-arrow i {
+  color: #e9ecef !important;
+  transition: color 0.25s ease;
+}
+
+/* Hover & Active → ikon dan arrow hitam */
+body.dark .sb-sidenav-menu .nav-link:hover i,
+body.dark .sb-sidenav-menu .nav-link.active i,
+body.dark .sb-sidenav-collapse-arrow:hover i {
+  color: #000 !important;
+}
+/* Matikan efek hover khusus untuk link "Master" (collapse trigger) */
+.nav-link[data-bs-target="#collapsePages"]:hover {
+  background-color: transparent !important;
+  color: inherit !important;
+}
+
+.nav-link[data-bs-target="#collapsePages"]:hover .sb-nav-link-icon i,
+.nav-link[data-bs-target="#collapsePages"]:hover .sb-sidenav-collapse-arrow i {
+  color: inherit !important;
+}
+/* Tombol Master (collapse trigger) — nonaktifkan hover background */
+.nav-link[data-bs-target="#collapsePages"] {
+  background-color: transparent !important;
+  color: var(--bs-body-color); /* ikuti warna teks mode aktif */
+}
+
+/* Hover — tidak ubah warna bg atau teks */
+.nav-link[data-bs-target="#collapsePages"]:hover {
+  background-color: transparent !important;
+  color: var(--bs-body-color) !important;
+}
+
+/* Ikon utama dan panah di mode light */
+.nav-link[data-bs-target="#collapsePages"] .sb-nav-link-icon i,
+.nav-link[data-bs-target="#collapsePages"] .sb-sidenav-collapse-arrow i {
+  color: #000; /* hitam di mode light */
+}
+
+/* Hover ikon di mode light — tetap hitam */
+.nav-link[data-bs-target="#collapsePages"]:hover .sb-nav-link-icon i,
+.nav-link[data-bs-target="#collapsePages"]:hover .sb-sidenav-collapse-arrow i {
+  color: #000 !important;
+}
+
+/* Mode dark: ubah jadi abu-abu terang */
+.dark .nav-link[data-bs-target="#collapsePages"] .sb-nav-link-icon i,
+.dark .nav-link[data-bs-target="#collapsePages"] .sb-sidenav-collapse-arrow i {
+  color: #d1d5db; /* Tailwind gray-300 */
+}
+
+/* Hover di mode dark — tetap abu-abu terang */
+.dark .nav-link[data-bs-target="#collapsePages"]:hover .sb-nav-link-icon i,
+.dark
+  .nav-link[data-bs-target="#collapsePages"]:hover
+  .sb-sidenav-collapse-arrow
+  i {
+  color: #d1d5db !important;
+}
+/* === Shopee-Style Responsive Table === */
+#tableProduk {
+  border-collapse: separate;
+  border-spacing: 0 8px;
+}
+
+#tableProduk thead tr {
+  background: var(--bs-light);
+}
+
+#tableProduk tbody tr {
+  background: var(--bs-body-bg);
+  transition: all 0.2s ease-in-out;
+  border-radius: 12px;
+}
+
+#tableProduk tbody tr:hover {
+  background-color: var(--bs-gray-100);
+  transform: scale(1.01);
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.05);
+}
+
+.product-img-wrapper {
+  width: 70px;
+  height: 70px;
+  overflow: hidden;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fafafa;
+}
+
+.product-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Mobile Responsive (Shopee Card Style) */
+@media (max-width: 768px) {
+  #tableProduk thead {
+    display: none;
+  }
+
+  #tableProduk,
+  #tableProduk tbody,
+  #tableProduk tr,
+  #tableProduk td {
+    display: block;
+    width: 100%;
+  }
+
+  #tableProduk tr {
+    margin-bottom: 1rem;
+    background: var(--bs-body-bg);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 1rem;
+  }
+
+  #tableProduk td {
+    text-align: left !important;
+    border: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.4rem 0;
+  }
+
+  #tableProduk td::before {
+    content: attr(data-label);
+    font-weight: 600;
+    color: var(--bs-gray-600);
+  }
+
+  .product-img-wrapper {
+    width: 90px;
+    height: 90px;
+  }
+}
+/* --- Kartu produk utama --- */
+.product-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 1rem;
+  overflow: hidden;
+  transition: all 0.35s ease;
+  position: relative;
+  height: 100%;
+}
+
+.product-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Media gambar --- */
+.product-media {
+  overflow: hidden;
+  border-bottom: 1px solid var(--border-card);
+  position: relative;
+}
+
+.product-thumb {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.product-card:hover .product-thumb {
+  transform: scale(1.06);
+}
+
+/* --- Badge Favorit --- */
+.badge-favorit {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  background: linear-gradient(135deg, #f7b500, #f76b1c);
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 8px rgba(247, 107, 28, 0.3);
+}
+
+/* --- Body konten --- */
+.product-body {
+  background: var(--bg-card);
+}
+
+.product-title {
+  font-weight: 600;
+  color: var(--text-title);
+  font-size: 1rem;
+  text-transform: capitalize;
+}
+
+.product-price {
+  color: var(--price-color);
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* --- Deskripsi --- */
+.product-desc {
+  font-size: 0.85rem;
+  line-height: 1.4;
+  color: var(--text-muted);
+  min-height: 38px;
+}
+
+/* --- Tombol utama (Tambah) --- */
+.btn-add-to-cart {
+  background: var(--btn-primary-bg);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  transition: all 0.25s ease-in-out;
+}
+
+.btn-add-to-cart:hover {
+  background: var(--btn-primary-hover);
+  transform: scale(1.02);
+}
+
+/* --- Tombol outline (Keranjangi) --- */
+.btn-outline-primary {
+  border: 2px solid var(--btn-outline-border);
+  color: var(--btn-outline-text);
+  background-color: transparent;
+  font-weight: 600;
+  transition: all 0.25s ease-in-out;
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--btn-outline-hover-bg);
+  color: var(--btn-outline-hover-text);
+  transform: scale(1.02);
+}
+
+/* --- Responsif --- */
+@media (max-width: 768px) {
+  .product-thumb {
+    height: 180px;
+  }
+  .product-title {
+    font-size: 0.95rem;
+  }
+  .product-price {
+    font-size: 0.9rem;
+  }
+}
+/* ===========================================================
+   🌞 Base: Light Mode
+   =========================================================== */
+.btn-add-to-cart {
+  --btn-bg: linear-gradient(135deg, #ffb300, #ff9800);
+  --btn-fg: #ffffff;
+
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  border: none;
+  border-radius: 50px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  padding: 0.6rem 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-add-to-cart i {
+  font-size: 1rem;
+}
+
+.btn-add-to-cart:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+  opacity: 0.95;
+}
+
+.btn-add-to-cart:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.btn-add-to-cart:focus {
+  outline: 2px solid rgba(255, 193, 7, 0.7);
+  outline-offset: 3px;
+}
+
+/* ===========================================================
+   🌙 Dark Mode (mengikuti script toggle)
+   =========================================================== */
+body.dark .btn-add-to-cart,
+:root.theme-dark .btn-add-to-cart {
+  --btn-bg: linear-gradient(135deg, #ffca28, #ffb300);
+  --btn-fg: #1a1a1a;
+
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  box-shadow: 0 3px 8px rgba(255, 193, 7, 0.25);
+}
+
+body.dark .btn-add-to-cart:hover,
+:root.theme-dark .btn-add-to-cart:hover {
+  opacity: 1;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 193, 7, 0.35);
+}
+
+body.dark .btn-add-to-cart:focus,
+:root.theme-dark .btn-add-to-cart:focus {
+  outline: 2px solid rgba(255, 213, 79, 0.7);
+  outline-offset: 3px;
+}
+/* Wrapper floating cart */
+.floating-cart-wrapper {
+  position: fixed;
+  bottom: 20px;
+  right: 60px; /* Tombol default kanan */
+  z-index: 1050;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+/* Tombol toggle cart */
+#toggleCart {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  transition: all 0.2s ease;
+  background-color: #0d6efd;
+  color: #fff;
+}
+
+/* Badge cart count */
+#toggleCart .badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+/* Konten keranjang */
+.floating-cart-content {
+  display: none;
+  position: fixed;
+  bottom: 90px; /* jarak dari tombol */
+  right: 80px;
+  width: 320px;
+  max-height: 80vh;
+  overflow-y: auto;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  background-color: #fff;
+  color: #000;
+  z-index: 1060;
+}
+
+/* Responsive untuk mobile */
+@media (max-width: 576px) {
+  .floating-cart-content {
+    width: 90vw;
+    max-width: 400px;
+    right: 10px;
+    bottom: 80px;
+  }
+
+  /* Tombol geser sedikit ke kiri di mobile */
+  .floating-cart-wrapper #toggleCart {
+    right: 15px;
+  }
+}
+
+/* Animasi slide */
+.floating-cart-content.show {
+  display: block;
+  animation: slideUp 0.3s ease forwards;
+}
+
+@keyframes slideUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Card dalam floating cart */
+.floating-cart-content .card {
+  border-radius: 12px;
+  box-shadow: none; /* Shadow ada di wrapper */
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  #toggleCart {
+    background-color: #1f2937;
+    color: #f9fafb;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  }
+
+  .floating-cart-content {
+    background-color: #111827;
+    color: #f3f4f6;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7);
+  }
+
+  .floating-cart-content input,
+  .floating-cart-content select,
+  .floating-cart-content textarea {
+    background-color: #1f2937;
+    color: #f9fafb;
+    border-color: #374151;
+  }
+
+  .floating-cart-content .form-label,
+  .floating-cart-content .form-text {
+    color: #d1d5db;
+  }
+
+  .floating-cart-content .list-group-item {
+    background-color: #1f2937;
+    border-color: #374151;
+    color: #f3f4f6;
+  }
+
+  .floating-cart-content .btn-success {
+    background-color: #10b981;
+    border-color: #10b981;
+    color: #f9fafb;
+  }
+
+  .floating-cart-content .btn-danger {
+    background-color: #ef4444;
+    border-color: #ef4444;
+    color: #f9fafb;
+  }
+}
+/* Default untuk light mode */
+#tablePelanggan tbody tr td {
+  color: #000; /* hitam untuk light mode */
+}
+
+/* Dark mode */
+body.dark #tablePelanggan tbody tr td,
+html.theme-dark #tablePelanggan tbody tr td {
+  color: #fff; /* putih untuk dark mode */
+}
+
+/* Optional: badge agar tetap terlihat di dark mode */
+body.dark #tablePelanggan .badge.bg-success,
+body.dark #tablePelanggan .badge.bg-secondary,
+body.dark #tablePelanggan .badge.bg-warning,
+body.dark #tablePelanggan .badge.bg-primary {
+  color: #000 !important; /* teks badge bisa diatur jika perlu */
+}
+
+/* Header table (thead) */
+body.dark #tablePelanggan thead th {
+  color: #fff;
+  background-color: #2c2c2c; /* bisa ubah sesuai selera */
+}
+
+/* Optional: border table agar lebih kontras di dark mode */
+body.dark #tablePelanggan,
+body.dark #tablePelanggan th,
+body.dark #tablePelanggan td {
+  border-color: #444;
+}
+/* 🌙 DARK MODE (body.dark atau html.theme-dark) */
+body.dark .modal-theme,
+html.theme-dark .modal-theme {
+  background-color: #1e1f23 !important;
+  color: #f1f3f5 !important;
+  border-color: #2c2d31 !important;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Header dan Footer kontras lebih tinggi */
+body.dark .modal-theme .modal-header,
+html.theme-dark .modal-theme .modal-header {
+  background-color: #26272b !important;
+  border-bottom: 1px solid #3a3b3f !important;
+}
+
+body.dark .modal-theme .modal-footer,
+html.theme-dark .modal-theme .modal-footer {
+  background-color: #26272b !important;
+  border-top: 1px solid #3a3b3f !important;
+}
+
+/* Tombol close lebih terang */
+body.dark .modal-theme .btn-close,
+html.theme-dark .modal-theme .btn-close {
+  filter: invert(1) brightness(150%);
+  opacity: 0.8;
+}
+body.dark .modal-theme .btn-close:hover,
+html.theme-dark .modal-theme .btn-close:hover {
+  opacity: 1;
+}
+
+/* Tombol kontras lebih tinggi */
+body.dark .modal-theme .btn,
+html.theme-dark .modal-theme .btn {
+  color: #f1f3f5 !important;
+  border-color: #4b4c51 !important;
+}
+body.dark .modal-theme .btn:hover,
+html.theme-dark .modal-theme .btn:hover {
+  background-color: #3a3b40 !important;
+  border-color: #5a5b61 !important;
+}
+
+/* Tabel di dalam modal tetap kontras dan hover jelas */
+body.dark .modal-theme table.table,
+html.theme-dark .modal-theme table.table {
+  color: #e5e6ea !important;
+  background-color: #222327 !important;
+  border-color: #3a3b3f !important;
+}
+
+body.dark .modal-theme table.table thead,
+html.theme-dark .modal-theme table.table thead {
+  background-color: #2b2c30 !important;
+  color: #fff !important;
+}
+
+body.dark .modal-theme table.table tbody tr:hover,
+html.theme-dark .modal-theme table.table tbody tr:hover {
+  background-color: #34353a !important;
+}
+
+/* Link hover di modal biar tetap jelas */
+body.dark .modal-theme a,
+html.theme-dark .modal-theme a {
+  color: #93b4ff;
+}
+body.dark .modal-theme a:hover,
+html.theme-dark .modal-theme a:hover {
+  color: #c4d4ff;
+  text-decoration: underline;
+}
+.modal-theme {
+  background-color: var(--bs-body-bg);
+  color: var(--bs-body-color);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+[data-theme="dark"] .modal-theme {
+  background-color: #1e1e1e;
+  color: #ddd;
+}
+
+.product-card {
+  background: var(--bs-light);
+  border-radius: 1rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  transition: all 0.25s ease;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .product-card {
+  background: #2a2a2a;
+  box-shadow: 0 1px 5px rgba(255, 255, 255, 0.05);
+}
+
+.product-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+.product-card img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+}
+
+.product-card .info {
+  padding: 0.6rem 0.75rem;
+}
+
+.product-card .name {
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.product-card .price {
+  font-weight: 700;
+  color: var(--bs-primary);
+  font-size: 0.95rem;
+}
+/* ---- Fix bug mondar-mandir modal ---- */
+body.modal-open {
+  padding-right: 0 !important; /* hilangkan pergeseran akibat scrollbar */
+  overflow-y: auto !important;
+}
+
+/* ---- Modal responsif ---- */
+.modal-dialog {
+  max-width: 90%;
+  width: auto;
+  margin: 1.75rem auto;
+  transition: transform 0.2s ease, opacity 0.2s ease; /* animasi halus */
+}
+
+@media (min-width: 768px) {
+  .modal-dialog {
+    max-width: 700px;
+  }
+}
+
+/* ---- Tampilan modern ---- */
+.modal-content {
+  border-radius: 1rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ---- Mode Light (default) ---- */
+:root[data-theme="light"] .modal-content {
+  background-color: #ffffff;
+  color: #222;
+  border: 1px solid #e5e5e5;
+}
+
+:root[data-theme="light"] .modal-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+:root[data-theme="light"] .table {
+  color: #212529;
+}
+
+/* ---- Mode Dark ---- */
+:root[data-theme="dark"] .modal-content,
+body.dark .modal-content {
+  background-color: #1e1e1e;
+  color: #e4e4e4;
+  border: 1px solid #333;
+}
+
+:root[data-theme="dark"] .modal-header,
+body.dark .modal-header {
+  background-color: #111;
+  border-bottom: 1px solid #333;
+}
+
+:root[data-theme="dark"] .table,
+body.dark .table {
+  color: #ddd;
+}
+
+:root[data-theme="dark"] .table-bordered td,
+:root[data-theme="dark"] .table-bordered th,
+body.dark .table-bordered td,
+body.dark .table-bordered th {
+  border-color: #444;
+}
+
+:root[data-theme="dark"] .table-light th,
+body.dark .table-light th {
+  background-color: #222 !important;
+  color: #eee;
+}
+
+:root[data-theme="dark"] .alert-warning,
+body.dark .alert-warning {
+  background-color: #3c2f00;
+  color: #ffdb70;
+  border-color: #5a4a00;
+}
+
+/* ---- Supaya modal tidak goyang saat hover ---- */
+.modal-backdrop.show {
+  opacity: 0.4;
+  transition: opacity 0.3s ease;
+}
+
+.modal.fade .modal-dialog {
+  transform: none !important;
+}
+
+.modal.show .modal-dialog {
+  transform: none !important;
+}
+/* 🌗 Default (Light mode) */
+.dropdown-menu {
+  background-color: #ffffff;
+  color: #212529;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.05);
+}
+
+.dropdown-menu .dropdown-item {
+  color: #212529;
+}
+
+.dropdown-menu .dropdown-item:hover,
+.dropdown-menu .dropdown-item:focus {
+  background-color: #f1f3f5;
+}
+
+/* 🌙 Dark Mode support (mengikuti JS toggle-mu) */
+body.dark .dropdown-menu,
+html.theme-dark .dropdown-menu {
+  background-color: #2b2b2b;
+  color: #f8f9fa;
+  border-color: #444;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.4);
+}
+
+body.dark .dropdown-menu .dropdown-item,
+html.theme-dark .dropdown-menu .dropdown-item {
+  color: #f8f9fa;
+}
+
+body.dark .dropdown-menu .dropdown-item:hover,
+html.theme-dark .dropdown-menu .dropdown-item:hover {
+  background-color: #3a3a3a;
+}
+
+body.dark .dropdown-menu .dropdown-item.text-danger:hover,
+html.theme-dark .dropdown-menu .dropdown-item.text-danger:hover {
+  background-color: rgba(220, 53, 69, 0.2);
+}
+/* 🌞 Default (light mode) */
+.table {
+  background-color: #ffffff !important;
+  color: #212529 !important;
+  border-color: #dee2e6 !important;
+}
+
+.table thead.table-light {
+  background-color: #f8f9fa !important;
+  color: #212529 !important;
+}
+
+.table tbody tr td {
+  background-color: #ffffff !important;
+  border-color: #dee2e6 !important;
+}
+
+.table tbody tr:hover td {
+  background-color: #f1f3f5 !important;
+}
+
+/* 🌙 Mode Gelap (aktif saat class .dark atau .theme-dark) */
+body.dark .table,
+html.theme-dark .table {
+  background-color: #111827 !important;
+  color: #e5e7eb !important;
+  border-color: #374151 !important;
+}
+
+body.dark .table thead.table-light,
+html.theme-dark .table thead.table-light {
+  background-color: #1f2937 !important;
+  color: #f1f5f9 !important;
+}
+
+body.dark .table tbody tr td,
+html.theme-dark .table tbody tr td {
+  background-color: #111827 !important;
+  color: #e5e7eb !important;
+  border-color: #374151 !important;
+}
+
+body.dark .table tbody tr:hover td,
+html.theme-dark .table tbody tr:hover td {
+  background-color: #1f2937 !important;
+}
+
+body.dark .badge,
+html.theme-dark .badge {
+  filter: brightness(1.1);
+}
+#cardAksiFloating {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  width: 280px;
+  display: none;
+  z-index: 1050;
+  border-radius: 1rem;
+}
+#cardAksiFloating.dark {
+  background: #2a2a3a;
+  color: #f5f5f5;
+}
+#cardAksiFloating .btn-close-floating {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  font-size: 1.2rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}

@@ -217,6 +217,18 @@
             </div>
         </div>
     </div>
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Omzet / Keuntungan per Tahun</h5>
+                    <canvas id="chartOmzetTahunan" height="100"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
 </div>
 
 <?= $this->endSection() ?>

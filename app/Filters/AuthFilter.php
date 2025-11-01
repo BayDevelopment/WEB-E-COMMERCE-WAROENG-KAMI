@@ -25,26 +25,32 @@ class AuthFilter implements FilterInterface
      */
     public function before(RequestInterface $request, $arguments = null)
     {
-        if (! session('isLoggedInAdmin')) {
-            session()->setFlashdata('error', 'Silakan login dulu');
+        $sess = session();
+
+        // Jika belum login
+        if (! $sess->get('isLoggedInAdmin')) {
+            $sess->setFlashdata('error', 'Silakan login dulu');
             return redirect()->to(site_url('auth/login'));
         }
 
-        $role = (string) session('admin_role');
+        $role = (string) $sess->get('admin_role');
 
-        // Jika role bukan admin → hapus session & cookies lalu redirect ke login
+        // Jika bukan admin
         if ($role !== 'admin') {
-            // Hancurkan session
+            helper('cookie');
+
+            // Simpan flashdata dulu SEBELUM session dihancurkan
+            session()->setFlashdata('error', 'Ups, akses ditolak!');
+
+            // Hapus cookie 'admin_exp' dengan cara aman
+            delete_cookie('admin_exp');
+
+            // Hancurkan session (setelah flashdata tersimpan)
             session()->destroy();
 
-            // Hapus cookie 'admin_exp' dengan cara set dengan expired di masa lalu
-            setcookie('admin_exp', '', time() - 3600, '/');
-
-            // Redirect ke login dengan flash
-            return redirect()->to(site_url('auth/login'))
-                ->with('error', 'Ups, akses ditolak. Hanya admin yang bisa masuk dashboard.');
+            // Redirect ke halaman login
+            return redirect()->to(site_url('auth/login'));
         }
-
 
         return null;
     }

@@ -422,59 +422,68 @@
     (() => {
         /**
          * Freeze form on submit tanpa kehilangan nilai.
-         * - Buat "mirror" hidden input untuk setiap field yang akan di-disable
-         * - Disable semua field (biar ga bisa diutak-atik)
-         * - Tampilkan overlay + kunci tombol submit
+         * Support mode light & dark.
          */
         function attachFreezeOnSubmit(form) {
             if (!form) return;
 
-            // bikin overlay tipis biar UX-nya jelas lagi proses
+            // buat overlay dengan gaya adaptif tema
             const overlay = document.createElement('div');
             overlay.className = 'form-blocker';
             overlay.style.cssText = `
-      position: absolute; inset: 0; background: rgba(255,255,255,.4);
-      backdrop-filter: blur(1px);
-      pointer-events: none; opacity: 0; transition: opacity .15s ease;
-      border-radius: inherit;
-    `;
-            // bungkus form content biar overlay nempel rapi
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, .4);
+            backdrop-filter: blur(2px);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity .2s ease;
+            border-radius: inherit;
+            z-index: 2;
+        `;
+
+            // tambahkan ke form
             form.style.position = 'relative';
             form.appendChild(overlay);
 
+            // fungsi untuk update warna overlay sesuai tema aktif
+            function updateOverlayTheme() {
+                const isDark = document.body.classList.contains('dark') || document.documentElement.classList.contains('theme-dark');
+                overlay.style.background = isDark ?
+                    'rgba(0, 0, 0, 0.4)' // lebih gelap di dark mode
+                    :
+                    'rgba(255, 255, 255, 0.4)'; // terang di light mode
+            }
+
+            // panggil sekali saat load
+            updateOverlayTheme();
+
+            // deteksi perubahan tema (misal dari tombol toggle)
+            const observer = new MutationObserver(updateOverlayTheme);
+            observer.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ['class', 'data-theme']
+            });
+            observer.observe(document.body, {
+                attributes: true,
+                attributeFilter: ['class']
+            });
+
             form.addEventListener('submit', (ev) => {
-                // Hindari double-freeze
+                // hindari double-freeze
                 if (form.dataset.freezing === '1') return;
                 form.dataset.freezing = '1';
 
-                // 1) Buat mirror hidden untuk tiap elemen yang bakal kita disable
                 const mirrors = [];
                 const els = Array.from(form.elements);
 
                 els.forEach(el => {
-                    // Skip yang ga bernama atau sudah hidden / submit / button
                     if (!el.name) return;
-                    if (el.type === 'hidden' || el.type === 'submit' || el.type === 'button') return;
-
-                    // NOTE: file input ga bisa di-mirror (value file read-only).
-                    // Kita biarin gak di-disable supaya file tetap terkirim.
+                    if (['hidden', 'submit', 'button'].includes(el.type)) return;
                     if (el.type === 'file') return;
 
-                    // Checkbox / radio → tulis hanya yang checked
-                    if (el.type === 'checkbox' || el.type === 'radio') {
-                        if (!el.checked) return;
-                        const hid = document.createElement('input');
-                        hid.type = 'hidden';
-                        hid.name = el.name;
-                        hid.value = el.value;
-                        // Tandai supaya gampang dibersihkan jika perlu
-                        hid.dataset.mirror = '1';
-                        form.appendChild(hid);
-                        mirrors.push(hid);
-                        return;
-                    }
+                    if ((el.type === 'checkbox' || el.type === 'radio') && !el.checked) return;
 
-                    // Select multiple → mirror tiap option yang selected
                     if (el.tagName === 'SELECT' && el.multiple) {
                         Array.from(el.selectedOptions).forEach(opt => {
                             const hid = document.createElement('input');
@@ -488,7 +497,6 @@
                         return;
                     }
 
-                    // Input/select/textarea biasa
                     const hid = document.createElement('input');
                     hid.type = 'hidden';
                     hid.name = el.name;
@@ -498,39 +506,36 @@
                     mirrors.push(hid);
                 });
 
-                // 2) Disable semua kontrol untuk ngunci UI (kecuali file)
+                // disable semua kontrol (kecuali file/hidden)
                 els.forEach(el => {
-                    if (el.type === 'file') return; // biarin aktif biar file kebawa
-                    if (el.type === 'hidden') return;
+                    if (el.type === 'file' || el.type === 'hidden') return;
                     el.setAttribute('disabled', 'disabled');
-                    // Tambah aria state nice-to-have
                     el.setAttribute('aria-disabled', 'true');
                 });
 
-                // 3) Kunci tombol submit + kasih spinner dikit
+                // ubah tombol submit jadi "Menyimpan..." + spinner
                 const submits = els.filter(e => e.type === 'submit' || e.matches('[type="submit"], .btn[type="submit"]'));
                 submits.forEach(btn => {
                     btn.dataset._origHtml = btn.innerHTML;
                     btn.disabled = true;
-                    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Menyimpan...';
+                    btn.innerHTML = `
+                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                    Menyimpan...
+                `;
                 });
 
-                // 4) Tampilkan overlay
+                // tampilkan overlay
+                updateOverlayTheme();
                 overlay.style.pointerEvents = 'auto';
                 overlay.style.opacity = '1';
-
-                // Catatan:
-                // - Kita TIDAK panggil preventDefault() → biarkan submit normal berjalan.
-                // - Jika server balikin validasi & stay di halaman yang sama, value tetap terkirim
-                //   karena mirror hidden sudah disisipkan sebelum disable.
-                // - Kalau kamu pakai JS submit custom, panggil fungsi ini manual sebelum fetch().
             });
         }
 
-        // Pasang ke kedua form kamu
+        // pasang ke form kamu
         attachFreezeOnSubmit(document.querySelector('#formEditAkun'));
         attachFreezeOnSubmit(document.querySelector('#formGantiPassword'));
     })();
+
 
     (() => {
         const KEY = 'wk_account_activePanel'; // simpan selector panel aktif

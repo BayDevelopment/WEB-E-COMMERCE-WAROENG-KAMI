@@ -12,7 +12,7 @@ class PesananModel extends Model
     protected $returnType       = 'array';
     protected $useSoftDeletes   = false;
     protected $protectFields    = true;
-    protected $allowedFields    = ['kode_pesanan',    'owner_key',    'nama_pelanggan',    'alamat',    'makan_ditempat',    'meja_id',    'total',    'status'];
+    protected $allowedFields    = ['kode_pesanan',    'owner_key',    'nama_pelanggan',    'alamat',    'makan_ditempat',    'meja_id',    'total', 'pembayaran',    'status'];
 
 
     // Dates

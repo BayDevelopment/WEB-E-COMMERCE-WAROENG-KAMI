@@ -16,6 +16,7 @@ class ProdukModel extends Model
         'nama_produk',
         'slug',
         'deskripsi',
+        'kategori',
         'harga',
         'gambar',
         'status',

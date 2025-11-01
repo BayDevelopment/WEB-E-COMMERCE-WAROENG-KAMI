@@ -160,7 +160,7 @@
     </ol>
 
     <div class="d-flex w-100 mb-3">
-        <a href="<?= base_url('admin/activity/tambah') ?>" class="btn btn-theme rounded-pill py-2 ms-auto"><span><i class="fa-solid fa-file-circle-plus"></i></span> Tambah</a>
+        <a href="<?= base_url('admin/produk/tambah') ?>" class="btn btn-theme rounded-pill py-2 ms-auto"><span><i class="fa-solid fa-file-circle-plus"></i></span> Tambah</a>
     </div>
 
 
@@ -181,11 +181,14 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label mb-0">Status</label>
+                            <label class="form-label mb-0">Kategori</label>
                             <select id="fStatus" class="form-select">
                                 <option value="">Semua</option>
-                                <option value="Aktif">Aktif</option>
-                                <option value="Nonaktif">Nonaktif</option>
+                                <?php if (!empty($kategori_list)): ?>
+                                    <?php foreach ($kategori_list as $kategori): ?>
+                                        <option value="<?= esc($kategori) ?>"><?= esc($kategori) ?></option>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
                             </select>
                         </div>
                         <div class="col-md-3 d-grid d-md-flex gap-2">
@@ -194,58 +197,95 @@
                             </button>
                         </div>
                     </form>
+
                 </div>
 
                 <div class="card-body" id="tableCard">
                     <?php if (!empty($rows) && is_array($rows)): ?>
-                        <table class="table text-dark" id="tableActivity">
-                            <thead>
-                                <tr>
-                                    <th scope="col">No</th>
-                                    <th scope="col">Nama</th>
-                                    <th scope="col">Email</th>
-                                    <th scope="col">Role</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php $no = 1; ?>
-                                <?php foreach ($rows as $d_a): ?>
+                        <div class="table-responsive rounded-4 shadow-sm">
+                            <table id="tableProduk2" class="table mb-0 text-capitalize align-middle border">
+                                <thead class="table-light text-center">
                                     <tr>
-                                        <th scope="row"><?= $no++ ?>.</th>
-                                        <td><?= esc($d_a['nama_lengkap'] ?? '-') ?></td>
-                                        <td><?= esc($d_a['email'] ?? '-') ?></td>
-                                        <td>
-                                            <span class="badge bg-primary">
-                                                <?= esc($d_a['role'] ?? '-') ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <?php $isActive = (int) ($d_a['is_active'] ?? 0); ?>
-                                            <span class="badge bg-<?= $isActive === 1 ? 'success' : 'danger' ?>">
-                                                <?= $isActive === 1 ? 'Aktif' : 'Nonaktif' ?>
-                                            </span>
-                                        </td>
-                                        <td>
-                                            <a href="<?= base_url('admin/activity/edit/' . esc($d_a['id_admin'])) ?>" class="btn btn-primary rounded-pill py-2" title="Edit">
-                                                <i class="fa-solid fa-file-pen"></i>
-                                            </a>
-                                            <a href="#"
-                                                onclick="confirmDeleteActivity(<?= $d_a['id_admin']; ?>)"
-                                                class="btn btn-danger rounded-pill py-2"
-                                                title="Hapus">
-                                                <i class="fa-solid fa-trash"></i>
-                                            </a>
-                                        </td>
+                                        <th>No</th>
+                                        <th>Gambar</th>
+                                        <th>Nama Produk</th>
+                                        <th>Harga</th>
+                                        <th>Favorit</th>
+                                        <th>Status</th>
+                                        <th>Aksi</th>
                                     </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody class="text-center">
+                                    <?php $no = 1;
+                                    foreach ($rows as $p): ?>
+                                        <tr>
+                                            <td><?= $no++ ?>.</td>
+
+                                            <!-- 🖼️ Gambar Produk -->
+                                            <td>
+                                                <?php if (!empty($p['gambar']) && file_exists(FCPATH . 'assets/uploads/produk/' . $p['gambar'])): ?>
+                                                    <img src="<?= base_url('assets/uploads/produk/' . esc($p['gambar'])) ?>"
+                                                        alt="Gambar Produk"
+                                                        class="rounded shadow-sm"
+                                                        width="70">
+                                                <?php else: ?>
+                                                    <img src="<?= base_url('assets/img/box.png') ?>"
+                                                        alt="No Image"
+                                                        class="rounded shadow-sm opacity-75"
+                                                        width="70">
+                                                <?php endif; ?>
+                                            </td>
+
+                                            <!-- 🏷️ Nama Produk -->
+                                            <td class="fw-semibold"><?= esc($p['nama_produk'] ?? '-') ?></td>
+
+                                            <!-- 💰 Harga -->
+                                            <td class="text-end fw-bold">Rp <?= number_format($p['harga'] ?? 0, 0, ',', '.') ?></td>
+
+                                            <!-- ⭐ Favorit -->
+                                            <td>
+                                                <?php $favorit = (int)($p['favorit'] ?? 0); ?>
+                                                <span class="badge bg-<?= $favorit === 1 ? 'warning text-dark' : 'secondary' ?>">
+                                                    <?= $favorit === 1 ? 'Ya' : 'Tidak' ?>
+                                                </span>
+                                            </td>
+
+                                            <!-- ⚙️ Status -->
+                                            <td>
+                                                <?php $status = strtolower($p['status'] ?? 'nonaktif'); ?>
+                                                <span class="badge bg-<?= $status === 'aktif' ? 'success' : 'danger' ?>">
+                                                    <?= ucfirst($status) ?>
+                                                </span>
+                                            </td>
+
+                                            <!-- 🧰 Aksi -->
+                                            <td>
+                                                <div class="btn-group">
+                                                    <!-- ✏️ Edit -->
+                                                    <a href="<?= base_url('admin/produk/edit/' . esc($p['id_produk'])) ?>"
+                                                        class="btn btn-sm btn-theme rounded-pill px-3 me-2" title="Edit">
+                                                        <i class="fa-solid fa-pen"></i>
+                                                    </a>
+
+                                                    <!-- 🗑️ Hapus -->
+                                                    <a href="javascript:void(0)"
+                                                        onclick="confirmDeleteProduk('<?= $p['id_produk'] ?>')"
+                                                        class="btn btn-sm btn-danger rounded-pill px-3"
+                                                        title="Hapus">
+                                                        <i class="fa-solid fa-trash"></i>
+                                                    </a>
+
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
                     <?php else: ?>
-                        <div class="cover-img-empty text-center py-4">
-                            <img src="<?= base_url('assets/img/box.png') ?>" alt="IMG-Waroeng-Kami" class="size-img-empty mb-2">
-                            <h6>Ups, Tidak ada activity yang terdeteksi!</h6>
+                        <div class="text-center py-4">
+                            <img src="<?= base_url('assets/img/box.png') ?>" alt="Empty" class="mb-2" width="100">
+                            <h6>Ups, tidak ada pesanan yang tersedia!</h6>
                         </div>
                     <?php endif; ?>
                 </div>

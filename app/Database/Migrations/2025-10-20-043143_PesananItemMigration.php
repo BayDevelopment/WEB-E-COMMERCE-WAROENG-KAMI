@@ -32,14 +32,14 @@ class PesananItemMigration extends Migration
             'CASCADE',
             'fk_pesanan_item_pesanan'
         );
-        $this->forge->addForeignKey(
-            'produk_id',
-            'tb_produk',
-            'id_produk',
-            'RESTRICT',
-            'CASCADE',
-            'fk_pesanan_item_produk'
-        );
+        // $this->forge->addForeignKey(
+        //     'produk_id',
+        //     'tb_produk',
+        //     'id_produk',
+        //     'RESTRICT',
+        //     'CASCADE',
+        //     'fk_pesanan_item_produk'
+        // );
 
         $this->forge->createTable('tb_pesanan_item', true, [
             'ENGINE'          => 'InnoDB',

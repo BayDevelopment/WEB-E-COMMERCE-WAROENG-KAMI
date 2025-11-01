@@ -74,6 +74,56 @@
         </div>
     </div>
 
+
+    <!-- letakkan di akhir <body> -->
+    <button id="themeToggle" class="theme-fab " type="button" aria-label="Toggle theme">
+        <span class="icon sun" aria-hidden="true">☀️</span>
+        <span class="icon moon" aria-hidden="true">🌙</span>
+    </button>
+    <!-- 2) Modal -->
+    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel"
+        aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-lg rounded-3 
+    bg-light text-dark dark-mode:bg-dark dark-mode:text-light">
+
+                <div class="modal-header border-0">
+                    <h5 class="modal-title fw-semibold" id="logoutModalLabel">Konfirmasi Logout</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="d-flex align-items-start gap-3">
+                        <div class="flex-shrink-0">
+                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center"
+                                style="width:44px;height:44px;background:rgba(220,53,69,.1);">
+                                <i class="fas fa-sign-out-alt text-danger"></i>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <div class="fs-6">Yakin mau keluar?</div>
+                            <div class="text-secondary small">Kamu akan dibawa ke halaman login.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0">
+                    <button type="button" class="btn btn-light dark-mode:btn-dark" data-bs-dismiss="modal">Batal</button>
+
+                    <form id="logoutForm" action="<?= site_url('auth/logout') ?>" method="post" class="d-inline">
+                        <?= csrf_field() ?>
+                        <button type="submit" class="btn btn-danger" id="logoutConfirmBtn">
+                            <span class="me-2" id="logoutBtnText">Logout</span>
+                            <span class="spinner-border spinner-border-sm d-none" id="logoutSpinner" role="status" aria-hidden="true"></span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- SweetAlert2 CDN -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- datatables -->
@@ -189,7 +239,7 @@
             });
         })();
 
-        // datatables
+        // datatables activity
         $(function() {
             const dt = $('#tableActivity').DataTable({
                 responsive: true,
@@ -288,55 +338,529 @@
                 dt.draw();
             });
         });
+
+        // datatables produk
+        $(function() {
+            const dt = $('#tableProduk2').DataTable({
+                responsive: true,
+                scrollX: true, // aktifkan scroll horizontal otomatis
+                pageLength: 10,
+                lengthMenu: [5, 10, 20, 50],
+                order: [
+                    [1, 'asc']
+                ], // default sort: Kode Pesanan
+
+                columnDefs: [{
+                        targets: 0,
+                        orderable: false,
+                        searchable: false
+                    }, // No
+                    {
+                        targets: 6,
+                        orderable: false,
+                        searchable: false
+                    } // Aksi
+                ],
+
+                dom: "<'row mb-2'<'col-sm-6'l><'col-sm-6 text-end'B>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row mt-2'<'col-sm-5'i><'col-sm-7'p>>",
+
+                buttons: [{
+                    extend: 'excelHtml5',
+                    text: '<i class="fa-solid fa-file-excel me-1"></i> Excel',
+                    className: 'btn btn-success',
+                    title: 'Data Produk - Waroeng Kami',
+                    filename: 'data_produk_' + new Date().toISOString().slice(0, 10).replace(/-/g, ''),
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6],
+                        format: {
+                            body: function(data) {
+                                return $('<div>').html(data).text().trim(); // bersihkan HTML
+                            }
+                        }
+                    }
+                }],
+
+                language: {
+                    search: 'Cari:',
+                    lengthMenu: 'Tampilkan _MENU_ data',
+                    zeroRecords: 'Tidak ada data ditemukan',
+                    info: 'Menampilkan _START_–_END_ dari _TOTAL_ data',
+                    infoEmpty: 'Tidak ada data',
+                    paginate: {
+                        first: 'Pertama',
+                        last: 'Terakhir',
+                        next: '›',
+                        previous: '‹'
+                    }
+                }
+            });
+
+            // Auto-number kolom No
+            dt.on('order.dt search.dt draw.dt', function() {
+                let i = 1;
+                dt.column(0, {
+                        search: 'applied',
+                        order: 'applied',
+                        page: 'current'
+                    })
+                    .nodes().each(function(cell) {
+                        cell.innerHTML = i++ + '.';
+                    });
+            }).draw();
+
+            // Pencarian manual
+            function applyKeyword() {
+                const kw = $('#fKeyword').val().trim();
+                dt.search(kw).draw();
+            }
+            $('#btnSearch').on('click', applyKeyword);
+            $('#fKeyword').on('keypress', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    applyKeyword();
+                }
+            });
+
+            // Filter berdasarkan Status
+            $('#fStatus').on('change', function() {
+                const v = $(this).val();
+                dt.column(7)
+                    .search(v ? '^' + $.fn.dataTable.util.escapeRegex(v) + '$' : '', true, false)
+                    .draw();
+            });
+
+            // Reset filter
+            $('#btnReset').on('click', function() {
+                $('#fKeyword,#fStatus').val('');
+                dt.search('').columns().search('').draw();
+            });
+        });
+
+        // datatables laporan
+        $(function() {
+            const dt = $('#tableLaporan').DataTable({
+                responsive: false, // Nonaktifkan card responsive
+                scrollX: true, // Scroll horizontal di mobile
+                pageLength: 10,
+                lengthMenu: [5, 10, 20, 50],
+                order: [
+                    [1, 'asc'] // Default sort: Kode Pesanan
+                ],
+                columnDefs: [{
+                        targets: 0,
+                        orderable: false,
+                        searchable: false
+                    } // No
+                ],
+                dom: "<'row mb-2'<'col-sm-6'l><'col-sm-6 text-end'B>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row mt-2'<'col-sm-5'i><'col-sm-7'p>>",
+                buttons: [{
+                    extend: 'excelHtml5',
+                    text: '<i class="fa-solid fa-file-excel me-1"></i> Excel',
+                    className: 'btn btn-success',
+                    title: 'Laporan Pemesanan - Waroeng Kami',
+                    filename: 'laporan_pemesanan_' + new Date().toISOString().slice(0, 10).replace(/-/g, ''),
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7, 8], // termasuk kolom Tanggal Pemesanan
+                        format: {
+                            body: function(data) {
+                                return $('<div>').html(data).text().trim(); // strip HTML
+                            }
+                        }
+                    }
+                }],
+                language: {
+                    search: "Cari:",
+                    lengthMenu: "Tampilkan _MENU_ data",
+                    zeroRecords: "Tidak ada data",
+                    info: "Menampilkan _START_–_END_ dari _TOTAL_ data",
+                    infoEmpty: "Tidak ada data",
+                    paginate: {
+                        first: "Pertama",
+                        last: "Terakhir",
+                        next: "›",
+                        previous: "‹"
+                    }
+                }
+            });
+
+            // Auto-number kolom No
+            dt.on('order.dt search.dt draw.dt', function() {
+                let i = 1;
+                dt.column(0, {
+                        search: 'applied',
+                        order: 'applied',
+                        page: 'current'
+                    })
+                    .nodes()
+                    .each(function(cell) {
+                        cell.innerHTML = i++ + '.';
+                    });
+            }).draw();
+
+            // Pencarian manual dari input #fKeyword
+            function applyKeyword() {
+                const kw = $('#fKeyword').val().trim();
+                dt.search(kw).draw();
+            }
+            $('#btnSearch').on('click', applyKeyword);
+            $('#fKeyword').on('keypress', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    applyKeyword();
+                }
+            });
+
+            // Filter Status exact match dari select #fStatus
+            $('#fStatus').on('change', function() {
+                const v = $(this).val();
+                dt.column(7) // index kolom Status
+                    .search(v ? '^' + $.fn.dataTable.util.escapeRegex(v) + '$' : '', true, false)
+                    .draw();
+            });
+
+            // Filter Tahun exact match dari select #fTahun
+            $('#fTahun').on('change', function() {
+                const y = $(this).val();
+                dt.column(8) // index kolom Tanggal Pemesanan
+                    .search(y ? '^' + $.fn.dataTable.util.escapeRegex(y) + '$' : '', true, false)
+                    .draw();
+            });
+
+            // Reset filter
+            $('#btnReset').on('click', function() {
+                $('#fKeyword,#fStatus,#fTahun').val('');
+                dt.search('').columns().search('').draw();
+            });
+        });
+
+
+        // datatables pelanggan
+        $(function() {
+            const dt = $('#tablePelanggan').DataTable({
+                responsive: true,
+                scrollX: true, // aktifkan scroll horizontal otomatis
+                pageLength: 10,
+                lengthMenu: [5, 10, 20, 50],
+                order: [
+                    [1, 'asc']
+                ], // default sort: Kode Pesanan
+
+                columnDefs: [{
+                        targets: 0,
+                        orderable: false,
+                        searchable: false
+                    }, // No
+                    {
+                        targets: 8,
+                        orderable: false,
+                        searchable: false
+                    } // Aksi
+                ],
+
+                dom: "<'row mb-2'<'col-sm-6'l><'col-sm-6 text-end'B>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row mt-2'<'col-sm-5'i><'col-sm-7'p>>",
+
+                buttons: [{
+                    extend: 'excelHtml5',
+                    text: '<i class="fa-solid fa-file-excel me-1"></i> Excel',
+                    className: 'btn btn-success',
+                    title: 'Data Pemesanan - Waroeng Kami',
+                    filename: 'data_pemesanan_' + new Date().toISOString().slice(0, 10).replace(/-/g, ''),
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5, 6, 7],
+                        format: {
+                            body: function(data) {
+                                return $('<div>').html(data).text().trim(); // bersihkan HTML
+                            }
+                        }
+                    }
+                }],
+
+                language: {
+                    search: 'Cari:',
+                    lengthMenu: 'Tampilkan _MENU_ data',
+                    zeroRecords: 'Tidak ada data ditemukan',
+                    info: 'Menampilkan _START_–_END_ dari _TOTAL_ data',
+                    infoEmpty: 'Tidak ada data',
+                    paginate: {
+                        first: 'Pertama',
+                        last: 'Terakhir',
+                        next: '›',
+                        previous: '‹'
+                    }
+                }
+            });
+
+            // Auto-number kolom No
+            dt.on('order.dt search.dt draw.dt', function() {
+                let i = 1;
+                dt.column(0, {
+                        search: 'applied',
+                        order: 'applied',
+                        page: 'current'
+                    })
+                    .nodes().each(function(cell) {
+                        cell.innerHTML = i++ + '.';
+                    });
+            }).draw();
+
+            // Pencarian manual
+            function applyKeyword() {
+                const kw = $('#fKeyword').val().trim();
+                dt.search(kw).draw();
+            }
+            $('#btnSearch').on('click', applyKeyword);
+            $('#fKeyword').on('keypress', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    applyKeyword();
+                }
+            });
+
+            // Filter berdasarkan Status
+            $('#fStatus').on('change', function() {
+                const v = $(this).val();
+                dt.column(7)
+                    .search(v ? '^' + $.fn.dataTable.util.escapeRegex(v) + '$' : '', true, false)
+                    .draw();
+            });
+
+            // Reset filter
+            $('#btnReset').on('click', function() {
+                $('#fKeyword,#fStatus').val('');
+                dt.search('').columns().search('').draw();
+            });
+        });
+
+        // datatables pemesanan
+        $(function() {
+            const dt = $('#tablePesanan').DataTable({
+                responsive: true,
+                scrollX: true, // aktifkan scroll horizontal otomatis
+                pageLength: 10,
+                lengthMenu: [5, 10, 20, 50],
+                order: [
+                    [1, 'asc']
+                ], // default sort: Nama Produk
+                columnDefs: [{
+                        targets: 0,
+                        orderable: false,
+                        searchable: false
+                    } // kolom No
+                ],
+                dom: "<'row mb-2'<'col-sm-6'l><'col-sm-6 text-end'B>>" +
+                    "<'row'<'col-sm-12'tr>>" +
+                    "<'row mt-2'<'col-sm-5'i><'col-sm-7'p>>",
+                buttons: [{
+                    extend: 'excelHtml5',
+                    text: '<i class="fa-solid fa-file-excel me-1"></i> Excel',
+                    className: 'btn btn-success',
+                    title: 'Data Pesanan - Waroeng Kami',
+                    filename: 'data_pesanan_' + new Date().toISOString().slice(0, 10).replace(/-/g, ''),
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4], // semua kolom
+                        format: {
+                            body: function(data) {
+                                return $('<div>').html(data).text().trim(); // bersihkan HTML
+                            }
+                        }
+                    }
+                }],
+                language: {
+                    search: 'Cari:',
+                    lengthMenu: 'Tampilkan _MENU_ data',
+                    zeroRecords: 'Tidak ada data ditemukan',
+                    info: 'Menampilkan _START_–_END_ dari _TOTAL_ data',
+                    infoEmpty: 'Tidak ada data',
+                    paginate: {
+                        first: 'Pertama',
+                        last: 'Terakhir',
+                        next: '›',
+                        previous: '‹'
+                    }
+                }
+            });
+
+            // Auto-numbering kolom No
+            dt.on('order.dt search.dt draw.dt', function() {
+                let i = 1;
+                dt.column(0, {
+                        search: 'applied',
+                        order: 'applied',
+                        page: 'current'
+                    })
+                    .nodes()
+                    .each(function(cell) {
+                        cell.innerHTML = i++ + '.';
+                    });
+            }).draw();
+
+            // Pencarian manual
+            function applyKeyword() {
+                const kw = $('#fKeyword').val().trim();
+                dt.search(kw).draw();
+            }
+            $('#btnSearch').on('click', applyKeyword);
+            $('#fKeyword').on('keypress', function(e) {
+                if (e.which === 13) {
+                    e.preventDefault();
+                    applyKeyword();
+                }
+            });
+
+            // Reset filter
+            $('#btnReset').on('click', function() {
+                $('#fKeyword').val('');
+                dt.search('').columns().search('').draw();
+            });
+        });
+
+        // delete activity data
+        window.confirmDeleteActivity = function(id) {
+            Swal.fire({
+                title: "Apakah Anda yakin?",
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Ya, hapus!",
+                cancelButtonText: "Batal",
+                reverseButtons: true,
+                focusCancel: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // arahkan ke controller hapusActivity
+                    window.location.href = "<?= base_url('admin/activity/hapus/') ?>" + encodeURIComponent(id);
+                }
+            });
+        };
+
+        // delete produk
+        window.confirmDeleteProduk = function(id) {
+            Swal.fire({
+                title: "Apakah Anda yakin?",
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Ya, hapus!",
+                cancelButtonText: "Batal",
+                reverseButtons: true,
+                focusCancel: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // arahkan ke controller hapusActivity
+                    window.location.href = "<?= base_url('admin/produk/hapus/') ?>" + encodeURIComponent(id);
+                }
+            });
+        };
+
+        // keranjang
+        window.confirmDeleteKeranjang = function(id) {
+            Swal.fire({
+                title: "Apakah Anda yakin?",
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Ya, hapus!",
+                cancelButtonText: "Batal",
+                reverseButtons: true,
+                focusCancel: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // arahkan ke controller hapusActivity
+                    window.location.href = "<?= base_url('admin/pemesanan/hapus/') ?>" + encodeURIComponent(id);
+                }
+            });
+        };
+
+        // delete pemesanan
+        window.confirmDeletePelanggan = function(id) {
+            Swal.fire({
+                title: "Apakah Anda yakin?",
+                text: "Data yang dihapus tidak dapat dikembalikan!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#d33",
+                cancelButtonColor: "#3085d6",
+                confirmButtonText: "Ya, hapus!",
+                cancelButtonText: "Batal",
+                reverseButtons: true,
+                focusCancel: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // arahkan ke controller hapusActivity
+                    window.location.href = "<?= base_url('admin/pelanggan/hapus/') ?>" + encodeURIComponent(id);
+                }
+            });
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('chartOmzetTahunan').getContext('2d');
+
+            const labels = <?= json_encode($profitLabels) ?>;
+            const dataValues = <?= json_encode($profitData) ?>;
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Omzet Tahunan (Rp)',
+                        data: dataValues,
+                        backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': Rp ' + context.parsed.y.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: value => 'Rp ' + value.toLocaleString()
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                autoSkip: false,
+                                maxRotation: 45,
+                                minRotation: 0
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Tinggi tetap
+            const canvasParent = document.getElementById('chartOmzetTahunan').parentNode;
+            canvasParent.style.height = '350px';
+        });
     </script>
-
-    <!-- letakkan di akhir <body> -->
-    <button id="themeToggle" class="theme-fab " type="button" aria-label="Toggle theme">
-        <span class="icon sun" aria-hidden="true">☀️</span>
-        <span class="icon moon" aria-hidden="true">🌙</span>
-    </button>
-    <!-- 2) Modal -->
-    <div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel"
-        aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content border-0 shadow-lg rounded-3 
-    bg-light text-dark dark-mode:bg-dark dark-mode:text-light">
-
-                <div class="modal-header border-0">
-                    <h5 class="modal-title fw-semibold" id="logoutModalLabel">Konfirmasi Logout</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
-                </div>
-
-                <div class="modal-body">
-                    <div class="d-flex align-items-start gap-3">
-                        <div class="flex-shrink-0">
-                            <div class="rounded-circle d-inline-flex align-items-center justify-content-center"
-                                style="width:44px;height:44px;background:rgba(220,53,69,.1);">
-                                <i class="fas fa-sign-out-alt text-danger"></i>
-                            </div>
-                        </div>
-                        <div class="flex-grow-1">
-                            <div class="fs-6">Yakin mau keluar?</div>
-                            <div class="text-secondary small">Kamu akan dibawa ke halaman login.</div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="modal-footer border-0">
-                    <button type="button" class="btn btn-light dark-mode:btn-dark" data-bs-dismiss="modal">Batal</button>
-
-                    <form id="logoutForm" action="<?= site_url('auth/logout') ?>" method="post" class="d-inline">
-                        <?= csrf_field() ?>
-                        <button type="submit" class="btn btn-danger" id="logoutConfirmBtn">
-                            <span class="me-2" id="logoutBtnText">Logout</span>
-                            <span class="spinner-border spinner-border-sm d-none" id="logoutSpinner" role="status" aria-hidden="true"></span>
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-        </div>
-    </div>
 </body>
 
 </html>
