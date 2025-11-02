@@ -1797,36 +1797,32 @@ class AdminController extends BaseController
 
         // Ambil parameter filter dari GET
         $keyword = $this->request->getGet('keyword');
-        $selected_status = $this->request->getGet('status');
         $selected_year = $this->request->getGet('tahun');
 
-        // Ambil daftar status unik dari pemesanan
-        $status_list = $this->PesananModel->select('status')->distinct()->findColumn('status');
-
-        // Ambil daftar tahun unik dari data pemesanan
+        // Ambil daftar tahun unik dari data pemesanan yang selesai
         $year_list_query = $this->PesananModel
             ->select('YEAR(created_at) AS tahun')
+            ->where('status', 'selesai')
             ->distinct()
             ->orderBy('tahun', 'DESC')
             ->get()
             ->getResultArray();
 
-        // Ambil kolom tahun saja
         $year_list = array_column($year_list_query, 'tahun');
 
-
         // Query data pemesanan dengan filter
-        $builder = $this->PesananModel;
+        $builder = $this->PesananModel
+            ->where('status', 'selesai'); // hanya ambil yang selesai
+
         if ($keyword) {
-            $builder = $builder->like('nama_pelanggan', $keyword);
+            $builder->like('nama_pelanggan', $keyword);
         }
-        if ($selected_status) {
-            $builder = $builder->where('status', $selected_status);
-        }
+
         if ($selected_year) {
-            $builder = $builder->where('YEAR(tanggal_pesan)', $selected_year);
+            $builder->where('YEAR(created_at)', $selected_year);
         }
-        $data_pemesanan = $builder->where('status', 'selesai')->findAll();
+
+        $data_pemesanan = $builder->orderBy('created_at', 'DESC')->findAll();
 
         $data = [
             'title' => 'Laporan | Waroeng Kami',
@@ -1834,8 +1830,6 @@ class AdminController extends BaseController
             'breadcrumb' => 'Laporan',
             'data_pemesanan' => $data_pemesanan,
             'keyword' => $keyword,
-            'status_list' => $status_list,
-            'selected_status' => $selected_status,
             'year_list' => $year_list,
             'selected_year' => $selected_year,
             'admin' => $admin
